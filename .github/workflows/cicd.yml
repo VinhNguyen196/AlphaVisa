@@ -2,7 +2,10 @@ name: CICD
 
 on: 
   push:
-    branches: [ main ]
+    branches:
+      - dev
+      - staging
+      - main
     paths-ignore:
       - .gitignore
       - CODE_OF_CONDUCT.md
@@ -21,6 +24,7 @@ jobs:
       build-artifacts: true
 
   deploy-development:
+    if: github.ref == 'refs/heads/dev'
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
     needs: [ build ]
@@ -28,15 +32,17 @@ jobs:
       environmentName: Development
 
   deploy-staging:
+    if: github.ref == 'refs/heads/staging'
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
-    needs: [ deploy-development ]
+    needs: [ build ]
     with:
       environmentName: Staging
 
   deploy-production:
+    if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
-    needs: [ deploy-staging ]
+    needs: [ build ]
     with:
       environmentName: Production

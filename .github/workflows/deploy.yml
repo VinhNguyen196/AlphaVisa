@@ -12,7 +12,6 @@ permissions:
   contents: read
 
 jobs:
-  
   validate:
      runs-on: ubuntu-latest
      environment: ${{ inputs.environmentName }}
@@ -56,9 +55,21 @@ jobs:
            sqlAdministratorPassword=${{ secrets.AZURE_SQL_ADMINISTRATOR_PASSWORD }}
            projectName=${{ vars.PROJECT_NAME }}
          additionalArguments: --what-if
- 
+
+  # manual-approval:
+    # if: inputs.environmentName == 'Staging'
+    # runs-on: ubuntu-latest
+    # environment: Staging
+    # steps:
+    # - name: Wait for manual approval
+      # uses: peter-evans/wait-for-approval@v3
+      # with:
+        # repo-token: ${{ secrets.GITHUB_TOKEN }}
+        # custom-approval-message: "Please approve the deployment to Staging."
+        # timeout-minutes: 120  # Set an appropriate timeout for the approval
+
   deploy:
-    needs: [ validate ]
+    needs: [ validate ] #,manual-approval ]  # Ensure deployment waits for validation and manual approval
     runs-on: ubuntu-latest
     environment: ${{ inputs.environmentName }}
 
