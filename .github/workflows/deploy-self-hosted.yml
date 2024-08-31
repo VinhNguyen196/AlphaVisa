@@ -1,0 +1,98 @@
+name: Deploy Self Hosted
+
+on:
+  workflow_call:
+    inputs:
+      environmentName:
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  validate:
+    runs-on: self-hosted
+    steps:
+    - name: Check disk space
+      run: |
+        df -h | grep -E '^(/|/home|/var|/usr)'  # Adjust the paths based on your environment
+        df -h | awk '$5 > 90 {print "Disk space is above 90% on "$6" with "$5" used."; exit 1}'
+    
+    - name: Ensure Docker is running
+      run: |
+        if ! docker info > /dev/null 2>&1; then
+          echo "Docker is not running on this host."
+          exit 1
+        fi
+
+    - name: Test network connectivity to Docker Hub
+      run: |
+        if ! curl -fsSL https://hub.docker.com > /dev/null; then
+          echo "Cannot reach Docker Hub. Check network connectivity."
+          exit 1
+        fi
+
+    - name: Validate Nginx configuration
+      run: |
+        sudo nginx -t
+
+  deploy:
+    runs-on: self-hosted
+    needs: validate
+    environment: ${{ inputs.environmentName }}
+
+    steps:
+
+    - uses: actions/checkout@v4
+      name: Checkout code
+
+    - name: Download EF Core migrations bundle artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: efbundle
+
+    - name: Pull Docker Image
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }}
+        docker pull ${{ secrets.DOCKER_ALPHAVISA_REPO }}:${{ github.sha }}
+
+    - name: Set up environment variables for Docker Compose
+      run: |
+        echo "SQL_DB_CONTAINER=${{ secrets.SQL_DB_CONTAINER }}" >> .env
+        echo "SQL_DB_NAME=${{ secrets.SQL_DB_NAME }}" >> .env
+        echo "SQL_DB_PASSWORD=${{ secrets.SQL_DB_PASSWORD }}" >> .env
+        echo "DOCKER_REGISTRY=${{ secrets.DOCKER_ALPHAVISA_REPO }}" >> .env
+        echo "GITHUB_SHA=${{ github.sha }}" >> .env
+
+    - name: Deploy Application
+      run: |
+        echo "Starting Docker Compose..."
+        docker-compose down
+        docker-compose up -d
+
+    - name: Wait for SQL Server to be ready
+      run: |
+        until docker exec ${{ secrets.SQL_DB_CONTAINER }} /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${{ secrets.SQL_DB_PASSWORD }} -Q "SELECT 1" > /dev/null 2>&1; do
+          echo "Waiting for SQL Server to be available..."
+          sleep 5
+        done
+        echo "SQL Server is ready."
+
+    - name: Apply EF Core migrations
+      run: |
+        unzip -o efbundle.zip
+        ./efbundle.exe --connection "Server=${{ secrets.SQL_DB_SERVER }};Database=${{ secrets.SQL_DB_NAME }};User ID=sa;Password=${{ secrets.SQL_DB_PASSWORD }};"
+
+    - name: Reload Nginx to apply any new configurations
+      run: |
+        sudo systemctl reload nginx
+
+    - name: Restart Application
+      run: |
+        sudo systemctl restart my-web-api.service
+
+    - name: Verify Deployment
+      run: |
+        curl -f http://localhost:8080 || exit 1  # Adjust this to the appropriate health check URL for your Web API
