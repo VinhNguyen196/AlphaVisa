@@ -39,29 +39,42 @@ jobs:
       uses: actions/setup-dotnet@v4
 
     - name: Restore solution
-      run: dotnet restore
+      run: dotnet restore "AlphaVisa.sln"
 
     - name: Build solution
-      run: dotnet build --no-restore --configuration Release
+      run: dotnet build "AlphaVisa.sln" --no-restore --configuration Release
       
     - name: Test solution
-      run: dotnet test --no-build --configuration Release --filter "FullyQualifiedName!~AcceptanceTests"
+      run: dotnet test "AlphaVisa.sln" --no-build --configuration Release --filter "FullyQualifiedName!~AcceptanceTests"
 
-    - name: Publish website
+    # - name: Publish website
+      # if: ${{ inputs.build-artifacts == true }}
+      # run: |
+        # dotnet publish --configuration Release --runtime win-x86 --self-contained --output ./publish
+        # cd publish
+        # zip -r ./publish.zip .
+      # working-directory: ./src/Web/
+
+    # - name: Upload website artifact (website)
+      # if: ${{ inputs.build-artifacts == true }}
+      # uses: actions/upload-artifact@v4
+      # with:
+        # name: website
+        # path: ./src/Web/publish/publish.zip
+        # if-no-files-found: error
+    
+    # Build Docker Image
+    - name: Build Docker image
       if: ${{ inputs.build-artifacts == true }}
       run: |
-        dotnet publish --configuration Release --runtime win-x86 --self-contained --output ./publish
-        cd publish
-        zip -r ./publish.zip .
-      working-directory: ./src/Web/
+        docker build -t ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ github.sha }} -f src/Web/Dockerfile .
 
-    - name: Upload website artifact (website)
+    # Push Docker Image to Registry
+    - name: Push Docker image to registry
       if: ${{ inputs.build-artifacts == true }}
-      uses: actions/upload-artifact@v4
-      with:
-        name: website
-        path: ./src/Web/publish/publish.zip
-        if-no-files-found: error
+      run: |
+        docker login -u ${{ vars.DOCKER_USERNAME }} -p ${{ vars.DOCKER_TOKEN }}
+        docker push ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ github.sha }}
     
     - name: Create EF Core migrations bundle - Install tool-manifest
       if: ${{ inputs.build-artifacts == true }}

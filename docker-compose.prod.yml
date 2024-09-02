@@ -1,0 +1,7 @@
+version: '3.4'
+
+services:
+  web:
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development" # Disabled temporary due to waiting the certificate
+      ASPNETCORE_URLS: "http://+:80" # Disabled temporary due to moving the control to proxy

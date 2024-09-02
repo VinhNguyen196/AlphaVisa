@@ -23,25 +23,25 @@ jobs:
     with:
       build-artifacts: true
 
-  deploy-development:
-    if: github.ref == 'refs/heads/dev'
-    uses: ./.github/workflows/deploy.yml
-    secrets: inherit
-    needs: [ build ]
-    with:
-      environmentName: Development
+  # deploy-development:
+    # if: github.ref == 'refs/heads/dev'
+    # uses: ./.github/workflows/deploy-self-hosted.yml
+    # secrets: inherit
+    # needs: [ build ]
+    # with:
+      # environmentName: Development
 
-  deploy-staging:
-    if: github.ref == 'refs/heads/staging'
-    uses: ./.github/workflows/deploy.yml
-    secrets: inherit
-    needs: [ build ]
-    with:
-      environmentName: Staging
+  # deploy-staging:
+    # if: github.ref == 'refs/heads/staging'
+    # uses: ./.github/workflows/deploy-self-hosted.yml
+    # secrets: inherit
+    # needs: [ build ]
+    # with:
+      # environmentName: Staging
 
   deploy-production:
     if: github.ref == 'refs/heads/main'
-    uses: ./.github/workflows/deploy.yml
+    uses: ./.github/workflows/deploy-self-hosted.yml
     secrets: inherit
     needs: [ build ]
     with:

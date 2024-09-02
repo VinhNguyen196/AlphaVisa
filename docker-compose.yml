@@ -1,0 +1,42 @@
+version: '3.4'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: ${SQL_DB_CONTAINER}  # Dynamically set the container name
+    environment:
+      SA_PASSWORD: "${SQL_DB_PASSWORD}"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sql_data:/var/opt/mssql
+    networks:
+      - app-network
+    restart: on-failure:1  # Restart on failure
+
+  web:
+    image: ${DOCKER_REGISTRY}:${GITHUB_SHA}
+    build:
+      context: .
+      dockerfile: src/Web/Dockerfile
+    container_name: app
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_URLS: "https://+:443;http://+:80"
+      ConnectionStrings__DefaultConnection: "Server=${SQL_DB_CONTAINER};Database=${SQL_DB_NAME};User Id=sa;Password=${SQL_DB_PASSWORD};Encrypt=true;TrustServerCertificate=true;"
+    ports:
+      - "8080:80"  # Map HTTP port
+      - "8081:443" # Map HTTPS port (change to your desired port if necessary)
+    depends_on:
+      - sqlserver
+    networks:
+      - app-network
+    restart: on-failure:2  # Restart on failure
+
+volumes:
+  sql_data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,0 +1,125 @@
+name: Deploy Self Hosted
+
+on:
+  workflow_call:
+    inputs:
+      environmentName:
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  validate:
+    runs-on: self-hosted
+    steps:
+    - name: Check disk space
+      run: |
+        EXCLUDE_LIST="/snap|/boot/efi|/run|/dev"
+        df -h | grep -E -v "${EXCLUDE_LIST}" | awk '$5+0 > 90 {print "Disk space is above 90% on "$6" with "$5" used."; exit 1}'
+        echo "Disk space is within acceptable limits."
+      shell: bash
+    
+    - name: Ensure Docker is running
+      run: |
+        if ! docker info > /dev/null 2>&1; then
+          echo "Docker is not running on this host."
+          exit 1
+        fi
+
+    - name: Test network connectivity to Docker Hub
+      run: |
+        if ! curl -fsSL https://hub.docker.com > /dev/null; then
+          echo "Cannot reach Docker Hub. Check network connectivity."
+          exit 1
+        fi
+
+    # - name: Validate Nginx configuration
+      # run: |
+        # sudo nginx -t
+
+  deploy:
+    runs-on: self-hosted
+    needs: validate
+    environment: ${{ inputs.environmentName }}
+
+    steps:
+
+    - uses: actions/checkout@v4
+      name: Checkout code
+
+    - name: Download EF Core migrations bundle artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: efbundle
+
+    - name: Pull Docker Image
+      run: |
+        docker login -u ${{ vars.DOCKER_USERNAME }} -p ${{ vars.DOCKER_TOKEN }}
+        docker pull ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ github.sha }}
+    - name: Remove old Docker images
+      run: |
+        # List all images related to the repository, excluding the current one
+        old_images=$(docker images --filter=reference='${{ vars.DOCKER_ALPHAVISA_REPO }}*' --format "{{.ID}}" | grep -v ${{ github.sha }})
+        # Remove old images
+        for image in $old_images; do
+            echo "Removing old image: $image"
+            docker rmi -f $image || echo "Failed to remove $image, it might be in use."
+        done
+
+    - name: Set up environment variables for Docker Compose
+      run: |
+        echo "SQL_DB_CONTAINER=${{ vars.SQL_DB_CONTAINER }}" >> .env
+        echo "SQL_DB_NAME=${{ vars.SQL_DB_NAME }}" >> .env
+        echo "SQL_DB_PASSWORD=${{ vars.SQL_DB_PASSWORD }}" >> .env
+        echo "DOCKER_REGISTRY=${{ vars.DOCKER_ALPHAVISA_REPO }}" >> .env
+        echo "GITHUB_SHA=${{ github.sha }}" >> .env
+
+    - name: Deploy Application
+      run: |
+        echo "Starting Docker Compose..."
+        docker compose down
+        docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+    - name: Wait for Services to be Ready
+      run: |
+        echo "Waiting for SQL Server to be available..."
+        timeout 120s bash -c 'until docker exec ${{ vars.SQL_DB_CONTAINER }} /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${{ vars.SQL_DB_PASSWORD }} -No -Q "SELECT 1" > /dev/null 2>&1; do
+            echo "SQL Server is not available yet, waiting..."
+            sleep 5
+        done'
+        if [ $? -ne 0 ]; then
+            echo "Timeout reached, SQL Server did not become ready in time."
+            exit 1
+        fi
+        echo "SQL Server is ready."
+        echo "Waiting for Application to be available..."
+        timeout 120s bash -c 'until curl -sSf http://localhost:8080 > /dev/null 2>&1; do
+            echo "Application is not available yet, waiting..."
+            sleep 5
+        done'
+        if [ $? -ne 0 ]; then
+            echo "Timeout reached, Application did not become ready in time."
+            exit 1
+        fi
+        echo "Application is ready."
+
+    - name: Apply EF Core migrations
+      run: |
+        unzip -o efbundle.zip
+        ./efbundle.exe --connection "Server=${{ vars.SQL_DB_SERVER }};Database=${{ vars.SQL_DB_NAME }};User ID=sa;Password=${{ vars.SQL_DB_PASSWORD }};"
+      continue-on-error: true  # Skip this step if it fails
+
+    - name: Reload Nginx to apply any new configurations
+      run: |
+        sudo systemctl reload nginx
+
+    # - name: Restart Application
+      # run: |
+        # sudo systemctl restart my-web-api.service
+
+    - name: Verify Deployment
+      run: |
+        curl -f http://localhost:8080 || exit 1  # Adjust this to the appropriate health check URL for your Web API
