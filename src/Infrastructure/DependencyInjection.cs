@@ -2,6 +2,7 @@
 using AlphaVisa.Domain.Constants;
 using AlphaVisa.Infrastructure.Data;
 using AlphaVisa.Infrastructure.Data.Interceptors;
+using AlphaVisa.Infrastructure.Email;
 using AlphaVisa.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -49,6 +50,8 @@ public static class DependencyInjection
 
         services.AddAuthorization(options =>
             options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
+
+        services.AddScoped<IMailService, MailService>();
 
         return services;
     }

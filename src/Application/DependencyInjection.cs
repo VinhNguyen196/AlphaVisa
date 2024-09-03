@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using AlphaVisa.Application.Common.Behaviours;
+using AlphaVisa.Application.Common.Interfaces;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
