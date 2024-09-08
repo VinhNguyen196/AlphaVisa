@@ -12,20 +12,38 @@ on:
 
   workflow_call:
     inputs:
+      environmentName:
+        required: true
+        type: string
       build-artifacts:
         type: boolean
         required: true
         default: false
-
+        
+    outputs:
+      webTag:
+        description: 'Web Tag output'
+        value: ${{ jobs.build.outputs.webTag }}  # This references the job output
+        
+        
 jobs:
   build:
-    # if: "!contains(github.event.head_commit.message, 'chore')"  # Exclude commits with 'chore' in the message
+    # if: "!contains(github.event.head_commit.message, 'chore')" Exclude commits with 'chore' in the message
     runs-on: ubuntu-latest
-
-    steps:
+    outputs:
+      webTag: ${{ steps.set_tag.outputs.webTag }}  # Set output for webTag at the job level
+    steps: 
+    - name: Set webTag Variable
+      if: ${{ inputs.build-artifacts == true }}
+      id: set_tag
+      run: |
+          ENV_NAME=${{ inputs.environmentName }}
+          echo "webTag=${ENV_NAME}-${{ github.sha }}" >> $GITHUB_ENV
+          echo "webTag=${ENV_NAME}-${{ github.sha }}" >> $GITHUB_OUTPUT
+    
     - uses: actions/checkout@v4
       name: Checkout code
-
+      
     - name: Cache NuGet packages
       uses: actions/cache@v4
       with:
@@ -67,14 +85,14 @@ jobs:
     - name: Build Docker image
       if: ${{ inputs.build-artifacts == true }}
       run: |
-        docker build -t ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ github.sha }} -f src/Web/Dockerfile .
+        docker build -t ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ steps.set_tag.outputs.webTag }} -f src/Web/Dockerfile .
 
     # Push Docker Image to Registry
     - name: Push Docker image to registry
       if: ${{ inputs.build-artifacts == true }}
       run: |
         docker login -u ${{ vars.DOCKER_USERNAME }} -p ${{ vars.DOCKER_TOKEN }}
-        docker push ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ github.sha }}
+        docker push ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ steps.set_tag.outputs.webTag }}
     
     - name: Create EF Core migrations bundle - Install tool-manifest
       if: ${{ inputs.build-artifacts == true }}
@@ -98,11 +116,12 @@ jobs:
       env:
         SkipNSwag: True
 
-
-    - name: Create EF Core migrations bundle - zip migrations bundle
+    # Combine appsettings.json and efbundle.exe and zip them together
+    - name: Create and zip both efbundle.exe and appsettings.json
       if: ${{ inputs.build-artifacts == true }}
       run: |
-        zip -r ./efbundle.zip efbundle.exe
+        cp src/Web/appsettings.json ./  # Copy appsettings.json to the root where efbundle.exe is located
+        zip -r ./efbundle.zip efbundle.exe appsettings.json
       env:
         SkipNSwag: True
 

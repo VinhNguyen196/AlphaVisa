@@ -16,7 +16,7 @@ services:
     restart: on-failure:1  # Restart on failure
 
   web:
-    image: ${DOCKER_REGISTRY}:${GITHUB_SHA}
+    image: ${DOCKER_REGISTRY}:${WEB_TAG}
     build:
       context: .
       dockerfile: src/Web/Dockerfile

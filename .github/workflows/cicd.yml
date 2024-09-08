@@ -17,10 +17,29 @@ permissions:
   contents: read
 
 jobs:
+  set-environment-name:
+    runs-on: ubuntu-latest
+    outputs:
+      environmentName: ${{ steps.set-env-name.outputs.environmentName }}
+    steps:
+      - name: Set environmentName
+        id: set-env-name
+        run: |
+          if [[ "${GITHUB_REF##*/}" == "main" ]]; then
+            ENV_NAME="production"
+          elif [[ "${GITHUB_REF##*/}" == "staging" ]]; then
+            ENV_NAME="staging"
+          elif [[ "${GITHUB_REF##*/}" == "dev" ]]; then
+            ENV_NAME="development"
+          fi
+          echo "ENV_NAME=${ENV_NAME}"
+          echo "environmentName=${ENV_NAME}" >> $GITHUB_OUTPUT
 
   build:
+    needs: [set-environment-name]
     uses: ./.github/workflows/build.yml
     with:
+      environmentName: ${{ needs.set-environment-name.outputs.environmentName }}
       build-artifacts: true
 
   # deploy-development:
@@ -41,8 +60,9 @@ jobs:
 
   deploy-production:
     if: github.ref == 'refs/heads/main'
+    needs: [build]
     uses: ./.github/workflows/deploy-self-hosted.yml
     secrets: inherit
-    needs: [ build ]
     with:
-      environmentName: Production
+      environmentName: production
+      webTag: ${{ needs.build.outputs.webTag }}  # Pass the web_tag output from the build job

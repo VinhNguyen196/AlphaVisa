@@ -4,7 +4,7 @@ services:
   sqlserver:
     container_name: test
     environment:
-      SA_PASSWORD: "SecureP@ssw0rd123!"
+      SA_PASSWORD: "SecureP@ssw0rd1234"
     ports:
       - "1433:1433"
 
@@ -14,7 +14,7 @@ services:
         context: .
         dockerfile: src/Web/Dockerfile
     environment:
-      ConnectionStrings__DefaultConnection: "Server=test;Database=alpha;User Id=sa;Password=SecureP@ssw0rd123!;Encrypt=true;TrustServerCertificate=true;"
+      ConnectionStrings__DefaultConnection: "Server=test;Database=alpha;User Id=sa;Password=SecureP@ssw0rd1234;Encrypt=true;TrustServerCertificate=true;"
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

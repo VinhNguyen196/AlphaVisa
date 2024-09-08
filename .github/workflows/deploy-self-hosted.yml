@@ -6,6 +6,9 @@ on:
       environmentName:
         required: true
         type: string
+      webTag:
+        required: true
+        type: string  # Pass the webTag as input to the workflow
 
 permissions:
   id-token: write
@@ -13,7 +16,11 @@ permissions:
 
 jobs:
   validate:
-    runs-on: self-hosted
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      matrix:
+        runner: [ ovh, azure ] # list of runner's labels
+    continue-on-error: true  # Allows each matrix job to continue even if one fails
     steps:
     - name: Check disk space
       run: |
@@ -25,8 +32,8 @@ jobs:
     - name: Ensure Docker is running
       run: |
         if ! docker info > /dev/null 2>&1; then
-          echo "Docker is not running on this host."
-          exit 1
+            echo "Docker is not running on this host."
+            exit 1
         fi
 
     - name: Test network connectivity to Docker Hub
@@ -41,8 +48,12 @@ jobs:
         # sudo nginx -t
 
   deploy:
-    runs-on: self-hosted
+    runs-on: ${{ matrix.runner }}
     needs: validate
+    strategy:
+      matrix:
+        runner: [ ovh, azure ] # list of runner's labels
+    continue-on-error: true  # Allows each matrix job to continue even if one fails
     environment: ${{ inputs.environmentName }}
 
     steps:
@@ -54,28 +65,117 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: efbundle
-
+    
     - name: Pull Docker Image
       run: |
-        docker login -u ${{ vars.DOCKER_USERNAME }} -p ${{ vars.DOCKER_TOKEN }}
-        docker pull ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ github.sha }}
-    - name: Remove old Docker images
+        echo "${{ vars.DOCKER_TOKEN }}" | docker login -u "${{ vars.DOCKER_USERNAME }}" --password-stdin
+        docker pull ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ inputs.webTag }}
+        
+    # Retain the latest two images and remove the rest locally
+    - name: Remove old Docker images locally, retain two latest and running
+      continue-on-error: true
       run: |
-        # List all images related to the repository, excluding the current one
-        old_images=$(docker images --filter=reference='${{ vars.DOCKER_ALPHAVISA_REPO }}*' --format "{{.ID}}" | grep -v ${{ github.sha }})
-        # Remove old images
-        for image in $old_images; do
-            echo "Removing old image: $image"
-            docker rmi -f $image || echo "Failed to remove $image, it might be in use."
-        done
+          current_tag="${{ inputs.webTag }}"
+          
+          # Get the list of running image tags
+          running_tag=$(docker ps --format '{{.Image}}' | grep "${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ inputs.environmentName }}" | awk -F ':' '{print $2}' | head -n 1)
+          if [ -z "$running_tag" ]; then
+            echo "No running containers found. Skipping running tag exclusion."
+          else
+            echo "Currently running image tag: $running_tag"
+          fi
+          # Get all images filtered by environmentName, sorted by creation date, exclude the one being deployed and currently running
+          all_images=$(docker images --filter=reference='${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ inputs.environmentName }}*' --format "{{.Repository}}:{{.Tag}} {{.CreatedAt}} {{.ID}}" | sort -k 2 -r)
+          # Exclude the currently deployed and running images
+          old_images=$(echo "$all_images" | grep -v "$current_tag" | grep -v "$running_tag" | awk '{print $NF}')  # $NF gets the last field (image ID)
+          if [ -z "$old_images" ]; then
+            echo "No old images to clean up."
+          else
+            # Retain the latest two images (currently running and deployed images)
+            echo "$old_images" | while read image_id; do
+              echo "Removing old image locally: $image_id"
+              docker rmi -f $image_id || echo "Failed to remove image $image_id, it might be in use."
+            done  
+          fi
+          
+    # Install jq (JSON parser tool)
+    # - name: Install jq
+      # run: |
+          # sudo apt-get update
+          # sudo apt-get install -y jq
 
+    # Remove old Docker images from Docker Hub, retain two latest and running
+    - name: Remove old Docker images from Docker Hub, retain two latest and running
+      continue-on-error: true    
+      run: |
+          repo="${{ vars.DOCKER_ALPHAVISA_REPO }}"
+          current_tag="${{ inputs.webTag }}"
+          
+          # Get the tag of the currently running container
+          running_tag=$(docker ps --format '{{.Image}}' | grep "${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ inputs.environmentName }}" | awk -F ':' '{print $2}' | head -n 1)
+          
+          if [ -z "$running_tag" ]; then
+            echo "No running container found. Skipping running tag exclusion."
+          else
+            echo "Currently running image tag: $running_tag"
+          fi
+          echo "Current deployed image tag: $current_tag"
+          # Get all tags filtered by environmentName from Docker Hub, sorted by pushed date
+          old_tags=$(curl -s -u "${{ vars.DOCKER_USERNAME }}:${{ vars.DOCKER_TOKEN }}" \
+          "https://hub.docker.com/v2/repositories/${repo}/tags/?page_size=100" \
+          | jq -r '.results[] | "\(.name) \(.tag_last_pushed)"' | sort -k 2 -r | awk '{print $1}' | grep "${{ inputs.environmentName }}" | grep -v $current_tag)
+          # If running_tag is not empty, exclude it
+          if [ -n "$running_tag" ]; then
+            old_tags=$(echo "$old_tags" | grep -v "$running_tag")
+          fi
+          # Retain the latest two tags (after excluding the currently running and deployed images)
+          echo "$old_tags" | tail -n +2 | while read tag; do
+              echo "Attempting to delete old image with tag: $tag from Docker Hub"
+              response=$(curl -s -o /dev/null -w "%{http_code}" -X DELETE -H "Authorization: Bearer ${{ vars.DOCKER_TOKEN }}" \
+                  "https://hub.docker.com/v2/repositories/${repo}/tags/$tag")
+              if [ "$response" -eq 204 ]; then
+                  echo "Deleted image with tag: $tag from Docker Hub"
+              else
+                  echo "Failed to delete image with tag: $tag from Docker Hub. HTTP status: $response"
+              fi
+          done
+    
+    # Load previous SQL Server password and handle the new password
+    - name: Retrieve and update SQL Server password
+      continue-on-error: true  # Skip this step if it fails
+      run: |
+          OLD_SQL_DB_PASSWORD="${{ vars.OLD_SQL_DB_PASSWORD }}"
+          NEW_SQL_DB_PASSWORD="${{ vars.SQL_DB_PASSWORD }}"
+          
+          echo "Testing connection with OLD_SQL_DB_PASSWORD"
+          
+          # Test SQL login with old password
+          if docker exec ${{ vars.SQL_DB_CONTAINER }} /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$OLD_SQL_DB_PASSWORD" -No -Q "SELECT 1"; then
+              echo "Old password is valid, updating password to new password..."
+              
+              # Change the password to the new one
+              docker exec ${{ vars.SQL_DB_CONTAINER }} /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$OLD_SQL_DB_PASSWORD" -No -Q "ALTER LOGIN sa WITH PASSWORD = '$NEW_SQL_DB_PASSWORD';"
+              
+              # Verify if the new password works
+              if docker exec ${{ vars.SQL_DB_CONTAINER }} /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$NEW_SQL_DB_PASSWORD" -No -Q "SELECT 1"; then
+                  echo "Password successfully updated!"
+              else
+                  echo "Failed to verify the new password after update."
+                  exit 1
+              fi
+          else
+              echo "Failed to authenticate using OLD_SQL_DB_PASSWORD. Aborting the password update."
+              exit 0
+          fi
+      shell: bash
+        
     - name: Set up environment variables for Docker Compose
       run: |
         echo "SQL_DB_CONTAINER=${{ vars.SQL_DB_CONTAINER }}" >> .env
         echo "SQL_DB_NAME=${{ vars.SQL_DB_NAME }}" >> .env
         echo "SQL_DB_PASSWORD=${{ vars.SQL_DB_PASSWORD }}" >> .env
         echo "DOCKER_REGISTRY=${{ vars.DOCKER_ALPHAVISA_REPO }}" >> .env
-        echo "GITHUB_SHA=${{ github.sha }}" >> .env
+        echo "WEB_TAG=${{ inputs.webTag }}" >> .env
 
     - name: Deploy Application
       run: |
@@ -106,10 +206,15 @@ jobs:
         fi
         echo "Application is ready."
 
+    # - name: Install unzip, zip tool #
+      # run: |
+          # sudo apt-get update
+          # sudo apt-get install -y unzip zip
+          
     - name: Apply EF Core migrations
       run: |
         unzip -o efbundle.zip
-        ./efbundle.exe --connection "Server=${{ vars.SQL_DB_SERVER }};Database=${{ vars.SQL_DB_NAME }};User ID=sa;Password=${{ vars.SQL_DB_PASSWORD }};"
+        ./efbundle.exe --connection "Server=${{ vars.SQL_DB_SERVER }};Database=${{ vars.SQL_DB_NAME }};User ID=sa;Password=${{ vars.SQL_DB_PASSWORD }};Encrypt=true;TrustServerCertificate=true;"
       continue-on-error: true  # Skip this step if it fails
 
     - name: Reload Nginx to apply any new configurations
