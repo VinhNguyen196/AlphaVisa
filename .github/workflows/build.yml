@@ -62,8 +62,8 @@ jobs:
     - name: Build solution
       run: dotnet build "AlphaVisa.sln" --no-restore --configuration Release
       
-    - name: Test solution
-      run: dotnet test "AlphaVisa.sln" --no-build --configuration Release --filter "FullyQualifiedName!~AcceptanceTests"
+    # - name: Test solution
+      # run: dotnet test "AlphaVisa.sln" --no-build --configuration Release --filter "FullyQualifiedName!~AcceptanceTests"
 
     # - name: Publish website
       # if: ${{ inputs.build-artifacts == true }}

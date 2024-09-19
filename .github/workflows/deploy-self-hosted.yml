@@ -19,7 +19,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     strategy:
       matrix:
-        runner: [ ovh, azure ] # list of runner's labels
+        runner: [ ovh ] # list of runner's labels
     continue-on-error: true  # Allows each matrix job to continue even if one fails
     steps:
     - name: Check disk space
@@ -52,7 +52,7 @@ jobs:
     needs: validate
     strategy:
       matrix:
-        runner: [ ovh, azure ] # list of runner's labels
+        runner: [ ovh ] # list of runner's labels
     continue-on-error: true  # Allows each matrix job to continue even if one fails
     environment: ${{ inputs.environmentName }}
 

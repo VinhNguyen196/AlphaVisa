@@ -4,8 +4,25 @@ using AlphaVisa.Infrastructure.Data;
 using AlphaVisa.Web.Options;
 using AlphaVisa.Web.Services;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Enable cors
+var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(opts =>
+{
+    opts.AddPolicy(name: myAllowSpecificOrigins, policy =>
+    {
+        policy.SetIsOriginAllowed(origin => true)
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials()
+        .SetPreflightMaxAge(TimeSpan.FromMinutes(42));
+    });
+
+    opts.DefaultPolicyName = myAllowSpecificOrigins;
+});
 
 // Add services to the container.
 builder.Services.AddKeyVaultIfConfigured(builder.Configuration);
@@ -40,9 +57,11 @@ else
     // app.UseHttpsRedirection(); let proxy handle this operation
 }
 
+app.UseCors(myAllowSpecificOrigins);
 app.UseHealthChecks("/health");
 app.UseStaticFiles();
 app.UseRequestLocalization(localizationOptions);
+
 app.UseSwaggerUi(settings =>
 {
     settings.Path = "/api";
