@@ -80,6 +80,8 @@ app.UseSwaggerUi(settings =>  // UseSwaggerUI Protected by if (env.IsDevelopment
             $"/swagger/{description.GroupName}/swagger.json"
         ));
     }
+
+    settings.ServerUrl = "https://api.alphavisa.vn/";
 });
 
 app.MapControllerRoute(
@@ -88,7 +90,7 @@ app.MapControllerRoute(
 
 app.MapRazorPages();
 
-app.MapFallbackToAreaPage("/NotFound", "Identity");
+app.MapFallbackToFile("index.html");
 
 app.Map("/", () => Results.Redirect("/api"));
 

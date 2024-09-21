@@ -8,5 +8,10 @@ public interface ISharedLocalizer
         get;
     }
 
+    public string this[string key, params object[] args] 
+    { 
+        get;
+    }
+
     LocalizedString GetLocalizedString(string key);
 }

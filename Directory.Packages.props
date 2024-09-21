@@ -35,6 +35,7 @@
     <PackageVersion Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.4" />
     <PackageVersion Include="Moq" Version="4.20.70" />
     <PackageVersion Include="NETCore.MailKit" Version="2.1.0" />
+    <PackageVersion Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageVersion Include="NSwag.AspNetCore" Version="14.1.0" />
     <PackageVersion Include="NSwag.MSBuild" Version="14.1.0" />
     <PackageVersion Include="nunit" Version="4.1.0" />

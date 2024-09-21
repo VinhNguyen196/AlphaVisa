@@ -36,6 +36,22 @@ public class SharedLocalizer : ISharedLocalizer
         }
     }
 
+    public string this[string key, params object[] args]
+    {
+        get
+        {
+            // Attempt to get the localized string from ValidationMessages
+            var localizedString = _validationMessagesLocalizer[key];
+            if (!localizedString.ResourceNotFound)
+            {
+                return string.Format(localizedString, args);
+            }
+
+            // If not found, fallback to SharedResource
+            return string.Format(_sharedResourceLocalizer[key], args);
+        }
+    }
+
     public LocalizedString GetLocalizedString(string key)
     {
         return this[key];

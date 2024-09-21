@@ -79,11 +79,38 @@ namespace AlphaVisa.Web.Resources.ValidationMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to at least greater than or equal to {0}..
+        /// </summary>
+        internal static string GreaterOrEqualTo {
+            get {
+                return ResourceManager.GetString("GreaterOrEqualTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please provide a valid phone number..
         /// </summary>
         internal static string PhoneInvalid {
             get {
                 return ResourceManager.GetString("PhoneInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Given &apos;{PropertyName}&apos; must be existed.
+        /// </summary>
+        internal static string PropertyMustExist {
+            get {
+                return ResourceManager.GetString("PropertyMustExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Service &apos;{PropertyName}&apos; must be unique.
+        /// </summary>
+        internal static string ServiceItemNameMustUnique {
+            get {
+                return ResourceManager.GetString("ServiceItemNameMustUnique", resourceCulture);
             }
         }
     }

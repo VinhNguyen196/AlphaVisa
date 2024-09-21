@@ -40,6 +40,7 @@ public static class IEndpointRouteBuilderExtensions
         Guard.Against.AnonymousMethod(handler);
 
         var routeBuilder = builder.MapDelete(pattern, handler)
+            .WithName(handler.Method.Name)
             .MapToApiVersion(version);
 
         return builder;

@@ -123,7 +123,16 @@
   <data name="EmailOrPhoneRequired" xml:space="preserve">
     <value>Either Email or Phone must be provided.</value>
   </data>
+  <data name="GreaterOrEqualTo" xml:space="preserve">
+    <value>at least greater than or equal to {0}.</value>
+  </data>
   <data name="PhoneInvalid" xml:space="preserve">
     <value>Please provide a valid phone number.</value>
+  </data>
+  <data name="PropertyMustExist" xml:space="preserve">
+    <value>Given '{PropertyName}' must be existed</value>
+  </data>
+  <data name="ServiceItemNameMustUnique" xml:space="preserve">
+    <value>Service '{PropertyName}' must be unique</value>
   </data>
 </root>

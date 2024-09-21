@@ -41,6 +41,14 @@ public class ConfigureSwaggerGenOptions : IConfigureNamedOptions<AspNetCoreOpenA
             options.PostProcess = document =>
             {
                 document.Info = documentInfo;
+                document.Servers.Clear(); // Remove the default server (which is http://)
+
+                // Add the correct HTTPS URL for production
+                document.Servers.Add(new NSwag.OpenApiServer
+                {
+                    Url = "https://api.alphavisa.vn",  // Replace with your actual domain
+                    Description = "Production HTTPS"
+                });
             };
 
             options.AddSecurity("JWT", Enumerable.Empty<string>(), new OpenApiSecurityScheme

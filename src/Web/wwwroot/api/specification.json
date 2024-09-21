@@ -10,6 +10,12 @@
     },
     "version": "1"
   },
+  "servers": [
+    {
+      "url": "https://api.alphavisa.vn",
+      "description": "Production HTTPS"
+    }
+  ],
   "paths": {
     "/api/v1/CustomerRegistrations": {
       "post": {
@@ -40,6 +46,159 @@
                 }
               }
             }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ServiceItems": {
+      "get": {
+        "tags": [
+          "ServiceItems"
+        ],
+        "operationId": "GetServiceItemWithPagination",
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedListOfServiceItemBriefDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "ServiceItems"
+        ],
+        "operationId": "CreateServiceItem",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateServiceItemCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "guid"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ServiceItems/{id}": {
+      "put": {
+        "tags": [
+          "ServiceItems"
+        ],
+        "operationId": "UpdateServiceItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateServiceItemCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "ServiceItems"
+        ],
+        "operationId": "DeleteServiceItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
           }
         },
         "security": [
@@ -187,7 +346,7 @@
         "tags": [
           "TodoItems"
         ],
-        "operationId": "DeleteApiV1TodoItems",
+        "operationId": "DeleteTodoItem",
         "parameters": [
           {
             "name": "id",
@@ -360,7 +519,7 @@
         "tags": [
           "TodoLists"
         ],
-        "operationId": "DeleteApiV1TodoLists",
+        "operationId": "DeleteTodoList",
         "parameters": [
           {
             "name": "id",
@@ -825,6 +984,170 @@
             "nullable": true
           }
         }
+      },
+      "PaginatedListOfServiceItemBriefDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ServiceItemBriefDto"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ServiceItemBriefDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ServiceItemType"
+              }
+            ]
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "thumbnail": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ComplextObject"
+              }
+            ]
+          }
+        }
+      },
+      "ServiceItemType": {
+        "type": "integer",
+        "description": "",
+        "x-enumNames": [
+          "OVERSEA",
+          "TOURISM",
+          "EMPLOYMENT",
+          "IMMIGRATION",
+          "SPONSORSHIP",
+          "VISA_FOREIGNERS"
+        ],
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6
+        ]
+      },
+      "ComplextObject": {
+        "type": "object",
+        "additionalProperties": {}
+      },
+      "CreateServiceItemCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ServiceItemType"
+              }
+            ]
+          },
+          "thumbnail": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ComplextObject"
+              }
+            ]
+          }
+        }
+      },
+      "UpdateServiceItemCommand": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityCacheBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "type": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ServiceItemType"
+                  }
+                ]
+              },
+              "thumbnail": {
+                "type": "string",
+                "nullable": true
+              },
+              "description": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ComplextObject"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "EntityCacheBase": {
+        "type": "object",
+        "x-abstract": true,
+        "additionalProperties": false
       },
       "PaginatedListOfTodoItemBriefDto": {
         "type": "object",

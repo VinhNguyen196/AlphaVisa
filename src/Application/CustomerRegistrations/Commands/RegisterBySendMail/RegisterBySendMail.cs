@@ -1,5 +1,4 @@
 ﻿using AlphaVisa.Application.Common.Interfaces;
-using AlphaVisa.Application.Common.Models;
 
 namespace AlphaVisa.Application.CustomerRegistrations.Commands.RegisterBySendEmail;
 

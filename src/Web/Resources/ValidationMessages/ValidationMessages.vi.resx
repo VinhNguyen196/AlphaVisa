@@ -123,7 +123,16 @@
   <data name="EmailOrPhoneRequired" xml:space="preserve">
     <value>Phải cung cấp Email hoặc Số điện thoại.</value>
   </data>
+  <data name="GreaterOrEqualTo" xml:space="preserve">
+    <value>phải lớn hơn hoặc bằng {0}.</value>
+  </data>
   <data name="PhoneInvalid" xml:space="preserve">
     <value>Vui lòng cung cấp một số điện thoại hợp lệ.</value>
+  </data>
+  <data name="PropertyMustExist" xml:space="preserve">
+    <value>Không tìm thấy dữ liệu với giá trị '{PropertyName}' này</value>
+  </data>
+  <data name="ServiceItemNameMustUnique" xml:space="preserve">
+    <value>Tên dịch vụ này đã có trong hệ thống</value>
   </data>
 </root>
