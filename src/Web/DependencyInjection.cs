@@ -3,9 +3,11 @@ using AlphaVisa.Application.Common.Interfaces;
 using AlphaVisa.Infrastructure.Data;
 using AlphaVisa.Web.Services;
 using Microsoft.AspNetCore.Mvc;
-
-using NSwag;
-using NSwag.Generation.Processors.Security;
+using Asp.Versioning;
+using AlphaVisa.Web.Options;
+using Microsoft.Extensions.Options;
+using NSwag.Generation.AspNetCore;
+using Asp.Versioning.ApiExplorer;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -30,22 +32,34 @@ public static class DependencyInjection
         services.Configure<ApiBehaviorOptions>(options =>
             options.SuppressModelStateInvalidFilter = true);
 
+        services.AddScoped<ISharedLocalizer, SharedLocalizer>();
+        services.ConfigureOptions<EmailOptionsSetup>();
+        services.AddTransient<IConfigureOptions<AspNetCoreOpenApiDocumentGeneratorSettings>, ConfigureSwaggerGenOptions>();
+        services.ConfigureOptions<ConfigureSwaggerGenOptions>();
+
         services.AddEndpointsApiExplorer();
 
-        services.AddOpenApiDocument((configure, sp) =>
+        services.AddApiVersioning(opts =>
         {
-            configure.Title = "AlphaVisa API";
+            opts.DefaultApiVersion = new(1);
+            opts.ApiVersionReader = new UrlSegmentApiVersionReader();
+            opts.ReportApiVersions = true; // Includes API versions in response headers
+            opts.AssumeDefaultVersionWhenUnspecified = false; // Throws 400 if version is missing
+        }).AddApiExplorer(opts =>
+        {
+            opts.GroupNameFormat = "'v'V";
+            opts.SubstituteApiVersionInUrl = true;
+        });
 
-            // Add JWT
-            configure.AddSecurity("JWT", Enumerable.Empty<string>(), new OpenApiSecurityScheme
-            {
-                Type = OpenApiSecuritySchemeType.ApiKey,
-                Name = "Authorization",
-                In = OpenApiSecurityApiKeyLocation.Header,
-                Description = "Type into the textbox: Bearer {your JWT token}."
-            });
+        // Register NSwag services
+        services.AddOpenApiDocument(configure =>
+        {
+            // Customize your document here or use the ConfigureSwaggerGenOptions
+            var serviceProvider = services.BuildServiceProvider();
+            var apiVersionDescriptionProvider = serviceProvider.GetRequiredService<IApiVersionDescriptionProvider>();
+            var optionsConfigurator = new ConfigureSwaggerGenOptions(apiVersionDescriptionProvider);
 
-            configure.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
+            optionsConfigurator.Configure(configure);
         });
 
         return services;

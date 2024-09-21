@@ -1,45 +1,46 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace AlphaVisa.Web.Infrastructure;
-
 public static class IEndpointRouteBuilderExtensions
 {
-    public static IEndpointRouteBuilder MapGet(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern = "")
+    public static IEndpointRouteBuilder MapGet(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern = "", int version = 1)
     {
         Guard.Against.AnonymousMethod(handler);
 
-        builder.MapGet(pattern, handler)
-            .WithName(handler.Method.Name);
+        var routeBuilder = builder.MapGet(pattern, handler)
+            .WithName(handler.Method.Name)
+            .MapToApiVersion(version);
 
         return builder;
     }
 
-    public static IEndpointRouteBuilder MapPost(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern = "")
+    public static IEndpointRouteBuilder MapPost(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern = "", int version = 1)
     {
         Guard.Against.AnonymousMethod(handler);
 
-        builder.MapPost(pattern, handler)
-            .WithName(handler.Method.Name);
+        var routeBuilder = builder.MapPost(pattern, handler)
+            .WithName(handler.Method.Name)
+            .MapToApiVersion(version);
 
         return builder;
     }
 
-    public static IEndpointRouteBuilder MapPut(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern)
+    public static IEndpointRouteBuilder MapPut(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern, int version = 1)
     {
         Guard.Against.AnonymousMethod(handler);
 
-        builder.MapPut(pattern, handler)
-            .WithName(handler.Method.Name);
+        var routeBuilder = builder.MapPut(pattern, handler)
+            .WithName(handler.Method.Name)
+            .MapToApiVersion(version);
 
         return builder;
     }
 
-    public static IEndpointRouteBuilder MapDelete(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern)
+    public static IEndpointRouteBuilder MapDelete(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern, int version = 1)
     {
         Guard.Against.AnonymousMethod(handler);
 
-        builder.MapDelete(pattern, handler)
-            .WithName(handler.Method.Name);
+        var routeBuilder = builder.MapDelete(pattern, handler)
+            .MapToApiVersion(version);
 
         return builder;
     }

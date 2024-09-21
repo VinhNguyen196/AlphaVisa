@@ -3,8 +3,11 @@ using AlphaVisa.Application.Common.Interfaces;
 using AlphaVisa.Infrastructure.Data;
 using AlphaVisa.Web.Options;
 using AlphaVisa.Web.Services;
+using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Options;
+using NSwag.Generation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,13 +37,10 @@ var localizationOptions = new RequestLocalizationOptions
     SupportedCultures = supportedCultures.Select(c => new CultureInfo(c)).ToList(),
     SupportedUICultures = supportedCultures.Select(c => new CultureInfo(c)).ToList()
 };
-
-builder.Services.AddScoped<ISharedLocalizer, SharedLocalizer>();
-builder.Services.ConfigureOptions<EmailOptionsSetup>();
-
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddWebServices();
+
 
 var app = builder.Build();
 
@@ -62,10 +62,24 @@ app.UseHealthChecks("/health");
 app.UseStaticFiles();
 app.UseRequestLocalization(localizationOptions);
 
-app.UseSwaggerUi(settings =>
+// Add OpenAPI 3.0 document serving middleware
+// Available at: http://localhost:<port>/swagger/v1/swagger.json
+app.UseOpenApi();
+// Add web UIs to interact with the document
+// Available at: http://localhost:<port>/swagger
+app.UseSwaggerUi(settings =>  // UseSwaggerUI Protected by if (env.IsDevelopment())
 {
-    settings.Path = "/api";
-    settings.DocumentPath = "/api/specification.json";
+    settings.Path = "/api";  // Path to Swagger UI
+    settings.DocumentPath = "/api/specification.json";  // Path to OpenAPI document
+    var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
+    foreach (var description in provider.ApiVersionDescriptions)
+    {
+        var version = description.GroupName.ToUpperInvariant();
+        settings.SwaggerRoutes.Add(new NSwag.AspNetCore.SwaggerUiRoute(
+            $"v{version}",
+            $"/swagger/{description.GroupName}/swagger.json"
+        ));
+    }
 });
 
 app.MapControllerRoute(

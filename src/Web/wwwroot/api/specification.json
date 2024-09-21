@@ -2,11 +2,16 @@
   "x-generator": "NSwag v14.1.0.0 (NJsonSchema v11.0.2.0 (Newtonsoft.Json v13.0.0.0))",
   "openapi": "3.0.0",
   "info": {
-    "title": "AlphaVisa API",
-    "version": "1.0.0"
+    "title": "AlphaVisa.Api v1",
+    "description": "AlphaVisa API Documentation",
+    "contact": {
+      "name": "AlphaVisa Support",
+      "email": "support@alphavisa.com"
+    },
+    "version": "1"
   },
   "paths": {
-    "/api/CustomerRegistrations": {
+    "/api/v1/CustomerRegistrations": {
       "post": {
         "tags": [
           "CustomerRegistrations"
@@ -44,7 +49,7 @@
         ]
       }
     },
-    "/api/TodoItems": {
+    "/api/v1/TodoItems": {
       "get": {
         "tags": [
           "TodoItems"
@@ -137,7 +142,7 @@
         ]
       }
     },
-    "/api/TodoItems/{id}": {
+    "/api/v1/TodoItems/{id}": {
       "put": {
         "tags": [
           "TodoItems"
@@ -182,7 +187,7 @@
         "tags": [
           "TodoItems"
         ],
-        "operationId": "DeleteTodoItem",
+        "operationId": "DeleteApiV1TodoItems",
         "parameters": [
           {
             "name": "id",
@@ -207,7 +212,7 @@
         ]
       }
     },
-    "/api/TodoItems/UpdateDetail/{id}": {
+    "/api/v1/TodoItems/UpdateDetail/{id}": {
       "put": {
         "tags": [
           "TodoItems"
@@ -249,7 +254,7 @@
         ]
       }
     },
-    "/api/TodoLists": {
+    "/api/v1/TodoLists": {
       "get": {
         "tags": [
           "TodoLists"
@@ -310,7 +315,7 @@
         ]
       }
     },
-    "/api/TodoLists/{id}": {
+    "/api/v1/TodoLists/{id}": {
       "put": {
         "tags": [
           "TodoLists"
@@ -355,7 +360,7 @@
         "tags": [
           "TodoLists"
         ],
-        "operationId": "DeleteTodoList",
+        "operationId": "DeleteApiV1TodoLists",
         "parameters": [
           {
             "name": "id",
@@ -380,12 +385,12 @@
         ]
       }
     },
-    "/api/Users/register": {
+    "/api/v1/Users/register": {
       "post": {
         "tags": [
           "Users"
         ],
-        "operationId": "PostApiUsersRegister",
+        "operationId": "PostApiV1UsersRegister",
         "requestBody": {
           "x-name": "registration",
           "content": {
@@ -414,12 +419,12 @@
         }
       }
     },
-    "/api/Users/login": {
+    "/api/v1/Users/login": {
       "post": {
         "tags": [
           "Users"
         ],
-        "operationId": "PostApiUsersLogin",
+        "operationId": "PostApiV1UsersLogin",
         "parameters": [
           {
             "name": "useCookies",
@@ -465,12 +470,12 @@
         }
       }
     },
-    "/api/Users/refresh": {
+    "/api/v1/Users/refresh": {
       "post": {
         "tags": [
           "Users"
         ],
-        "operationId": "PostApiUsersRefresh",
+        "operationId": "PostApiV1UsersRefresh",
         "requestBody": {
           "x-name": "refreshRequest",
           "content": {
@@ -496,12 +501,12 @@
         }
       }
     },
-    "/api/Users/confirmEmail": {
+    "/api/v1/Users/confirmEmail": {
       "get": {
         "tags": [
           "Users"
         ],
-        "operationId": "GetApiUsersConfirmEmail",
+        "operationId": "GetApiV1UsersConfirmEmail",
         "parameters": [
           {
             "name": "userId",
@@ -538,12 +543,12 @@
         }
       }
     },
-    "/api/Users/resendConfirmationEmail": {
+    "/api/v1/Users/resendConfirmationEmail": {
       "post": {
         "tags": [
           "Users"
         ],
-        "operationId": "PostApiUsersResendConfirmationEmail",
+        "operationId": "PostApiV1UsersResendConfirmationEmail",
         "requestBody": {
           "x-name": "resendRequest",
           "content": {
@@ -562,12 +567,12 @@
         }
       }
     },
-    "/api/Users/forgotPassword": {
+    "/api/v1/Users/forgotPassword": {
       "post": {
         "tags": [
           "Users"
         ],
-        "operationId": "PostApiUsersForgotPassword",
+        "operationId": "PostApiV1UsersForgotPassword",
         "requestBody": {
           "x-name": "resetRequest",
           "content": {
@@ -596,12 +601,12 @@
         }
       }
     },
-    "/api/Users/resetPassword": {
+    "/api/v1/Users/resetPassword": {
       "post": {
         "tags": [
           "Users"
         ],
-        "operationId": "PostApiUsersResetPassword",
+        "operationId": "PostApiV1UsersResetPassword",
         "requestBody": {
           "x-name": "resetRequest",
           "content": {
@@ -630,12 +635,12 @@
         }
       }
     },
-    "/api/Users/manage/2fa": {
+    "/api/v1/Users/manage/2fa": {
       "post": {
         "tags": [
           "Users"
         ],
-        "operationId": "PostApiUsersManage2fa",
+        "operationId": "PostApiV1UsersManage2fa",
         "requestBody": {
           "x-name": "tfaRequest",
           "content": {
@@ -679,12 +684,12 @@
         ]
       }
     },
-    "/api/Users/manage/info": {
+    "/api/v1/Users/manage/info": {
       "get": {
         "tags": [
           "Users"
         ],
-        "operationId": "GetApiUsersManageInfo",
+        "operationId": "GetApiV1UsersManageInfo",
         "responses": {
           "200": {
             "description": "",
@@ -720,7 +725,7 @@
         "tags": [
           "Users"
         ],
-        "operationId": "PostApiUsersManageInfo",
+        "operationId": "PostApiV1UsersManageInfo",
         "requestBody": {
           "x-name": "infoRequest",
           "content": {
@@ -764,7 +769,7 @@
         ]
       }
     },
-    "/api/WeatherForecasts": {
+    "/api/v1/WeatherForecasts": {
       "get": {
         "tags": [
           "WeatherForecasts"
