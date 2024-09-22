@@ -132,7 +132,7 @@
   <data name="PropertyMustExist" xml:space="preserve">
     <value>Given '{PropertyName}' must be existed</value>
   </data>
-  <data name="ServiceItemNameMustUnique" xml:space="preserve">
-    <value>Service '{PropertyName}' must be unique</value>
+  <data name="PropertyMustUnique" xml:space="preserve">
+    <value>Given '{PropertyName}' must be unique</value>
   </data>
 </root>

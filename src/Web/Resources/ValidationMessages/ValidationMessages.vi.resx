@@ -132,7 +132,7 @@
   <data name="PropertyMustExist" xml:space="preserve">
     <value>Không tìm thấy dữ liệu với giá trị '{PropertyName}' này</value>
   </data>
-  <data name="ServiceItemNameMustUnique" xml:space="preserve">
-    <value>Tên dịch vụ này đã có trong hệ thống</value>
+  <data name="PropertyMustUnique" xml:space="preserve">
+    <value>Giá trị '{PropertyName}' này đã có trong hệ thống</value>
   </data>
 </root>

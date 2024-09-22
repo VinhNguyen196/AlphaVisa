@@ -106,11 +106,11 @@ namespace AlphaVisa.Web.Resources.ValidationMessages {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Service &apos;{PropertyName}&apos; must be unique.
+        ///   Looks up a localized string similar to Given &apos;{PropertyName}&apos; must be unique.
         /// </summary>
-        internal static string ServiceItemNameMustUnique {
+        internal static string PropertyMustUnique {
             get {
-                return ResourceManager.GetString("ServiceItemNameMustUnique", resourceCulture);
+                return ResourceManager.GetString("PropertyMustUnique", resourceCulture);
             }
         }
     }

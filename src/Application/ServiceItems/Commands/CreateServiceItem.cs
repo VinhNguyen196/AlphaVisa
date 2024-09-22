@@ -28,7 +28,7 @@ public class CreateServiceItemCommandValidator : AbstractValidator<CreateService
         RuleFor(si => si.Name)
             .NotEmpty()
             .MustAsync(BeUniqueName)
-                .WithMessage(localizer["ServiceItemNameMustUnique"])
+                .WithMessage(localizer["PropertyMustUnique"])
                 .WithErrorCode("Unique");
 
         RuleFor(si => si.Type)

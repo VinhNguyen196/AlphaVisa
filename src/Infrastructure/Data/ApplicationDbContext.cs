@@ -17,6 +17,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     public DbSet<ServiceItem> ServiceItems => Set<ServiceItem>();
 
+    public DbSet<NewItem> NewItems => Set<NewItem>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

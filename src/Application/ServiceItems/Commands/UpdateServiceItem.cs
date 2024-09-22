@@ -52,7 +52,7 @@ public class UpdateServiceItemCommandValidator : AbstractValidator<UpdateService
         RuleFor(si => si.Name)
             .NotEmpty()
             .MustAsync((si, name, clt) => BeUniqueName(si.Id, name, clt))
-                .WithMessage(localizer["ServiceItemNameMustUnique"])
+                .WithMessage(localizer["PropertyMustUnique"])
                 .WithErrorCode("Unique");
 
         RuleFor(si => si.Type)

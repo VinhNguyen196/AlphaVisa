@@ -37,18 +37,29 @@ public class AuditableEntityInterceptor : SaveChangesInterceptor
     {
         if (context == null) return;
 
-        foreach (var entry in context.ChangeTracker.Entries<BaseAuditableEntity<object>>())
+        var utcNow = _dateTime.GetUtcNow();
+        var genericBaseEntTypeDef = typeof(BaseAuditableEntity<>);
+
+        foreach (var entry in context.ChangeTracker.Entries())
         {
-            if (entry.State is EntityState.Added or EntityState.Modified || entry.HasChangedOwnedEntities())
+            var entType = entry.Entity.GetType();
+            var baseType = entType.BaseType;
+
+            if (baseType != null && baseType.IsGenericType && baseType.GetGenericTypeDefinition() == genericBaseEntTypeDef)
             {
-                var utcNow = _dateTime.GetUtcNow();
-                if (entry.State == EntityState.Added)
+                if (entry.State == EntityState.Added || entry.State == EntityState.Modified || entry.HasChangedOwnedEntities())
                 {
-                    entry.Entity.CreatedBy = _user.Id;
-                    entry.Entity.Created = utcNow;
-                } 
-                entry.Entity.LastModifiedBy = _user.Id;
-                entry.Entity.LastModified = utcNow;
+                    var auditableEntity = entry.Entity as dynamic;  // Cast to dynamic to access properties
+
+                    if (entry.State == EntityState.Added)
+                    {
+                        auditableEntity.CreatedBy = _user.Id;
+                        auditableEntity.Created = utcNow;
+                    }
+
+                    auditableEntity.LastModifiedBy = _user.Id;
+                    auditableEntity.LastModified = utcNow;
+                }
             }
         }
     }
