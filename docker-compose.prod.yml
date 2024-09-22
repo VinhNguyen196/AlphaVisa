@@ -3,5 +3,10 @@ version: '3.4'
 services:
   web:
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development" # Disabled temporary due to waiting the certificate
-      ASPNETCORE_URLS: "http://+:80" # Disabled temporary due to moving the control to proxy
+      ASPNETCORE_ENVIRONMENT: "Development" # This sets the environment to Production, which is fine
+      ASPNETCORE_URLS: "http://+:80" # https://+:443; This is correct, you are binding to both HTTP and HTTPS ports
+      # ASPNETCORE_Kestrel__Certificates__Default__Path: "/https-certs/api.alphavisa.vn.crt"
+      # ASPNETCORE_Kestrel__Certificates__Default__KeyPath: "/https-certs/api.alphavisa.vn.key"
+    # volumes:
+    #   - /etc/lego/certificates/:/https-certs # This mounts the certificates from the host into the container's /https-certs directory
+    #   - ./dataprotection-keys:/home/app/.aspnet/DataProtection-Keys # Mounts to store key data to more persisted place

@@ -11,6 +11,17 @@ using NSwag.Generation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.WebHost.ConfigureKestrel((context, serverOptions) =>
+{
+    //var kestrelSection = context.Configuration.GetSection("Kestrel");
+
+    //serverOptions.Configure(kestrelSection)
+    //    .Endpoint("HTTPS", listenOptions =>
+    //    {
+    //        // ...
+    //    });
+});
+
 // Enable cors
 var myAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(opts =>
@@ -71,17 +82,6 @@ app.UseSwaggerUi(settings =>  // UseSwaggerUI Protected by if (env.IsDevelopment
 {
     settings.Path = "/api";  // Path to Swagger UI
     settings.DocumentPath = "/api/specification.json";  // Path to OpenAPI document
-    var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
-    foreach (var description in provider.ApiVersionDescriptions)
-    {
-        var version = description.GroupName.ToUpperInvariant();
-        settings.SwaggerRoutes.Add(new NSwag.AspNetCore.SwaggerUiRoute(
-            $"v{version}",
-            $"/swagger/{description.GroupName}/swagger.json"
-        ));
-    }
-
-    settings.ServerUrl = "https://api.alphavisa.vn/";
 });
 
 app.MapControllerRoute(
