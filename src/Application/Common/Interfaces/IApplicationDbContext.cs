@@ -12,5 +12,7 @@ public interface IApplicationDbContext
 
     DbSet<NewItem> NewItems { get; }
 
+    DbSet<ContactItem> ContactItems { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

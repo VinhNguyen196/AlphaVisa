@@ -11,6 +11,159 @@
     "version": "1"
   },
   "paths": {
+    "/api/v1/ContactItems": {
+      "get": {
+        "tags": [
+          "ContactItems"
+        ],
+        "operationId": "GetContactItemWithPagination",
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginatedListOfContactItemBriefDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "ContactItems"
+        ],
+        "operationId": "CreateContactItem",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateContactItem"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "guid"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/v1/ContactItems/{id}": {
+      "put": {
+        "tags": [
+          "ContactItems"
+        ],
+        "operationId": "UpdateContactItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateContactItem"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 2
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "ContactItems"
+        ],
+        "operationId": "DeleteContactItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/v1/CustomerRegistrations": {
       "post": {
         "tags": [
@@ -83,7 +236,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PaginatedListOfNewsItemBriefDto"
+                  "$ref": "#/components/schemas/PaginatedListOfNewItemBriefDto"
                 }
               }
             }
@@ -742,6 +895,149 @@
   },
   "components": {
     "schemas": {
+      "PaginatedListOfContactItemBriefDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContactItemBriefDto"
+            }
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "hasPreviousPage": {
+            "type": "boolean"
+          },
+          "hasNextPage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ContactItemBriefDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "thumbnail": {
+            "type": "string",
+            "nullable": true
+          },
+          "story": {
+            "type": "string",
+            "nullable": true
+          },
+          "metadata": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ComplextObject"
+              }
+            ]
+          },
+          "created": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "ComplextObject": {
+        "type": "object",
+        "additionalProperties": {}
+      },
+      "CreateContactItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "thumbnail": {
+            "type": "string",
+            "nullable": true
+          },
+          "story": {
+            "type": "string",
+            "nullable": true
+          },
+          "metadata": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ComplextObject"
+              }
+            ]
+          }
+        }
+      },
+      "UpdateContactItem": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/EntityCacheBase"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "guid"
+              },
+              "name": {
+                "type": "string",
+                "nullable": true
+              },
+              "thumbnail": {
+                "type": "string",
+                "nullable": true
+              },
+              "story": {
+                "type": "string",
+                "nullable": true
+              },
+              "metadata": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/ComplextObject"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "EntityCacheBase": {
+        "type": "object",
+        "x-abstract": true,
+        "additionalProperties": false
+      },
       "RegisterBySendMailCommand": {
         "type": "object",
         "additionalProperties": false,
@@ -768,14 +1064,14 @@
           }
         }
       },
-      "PaginatedListOfNewsItemBriefDto": {
+      "PaginatedListOfNewItemBriefDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
           "items": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/NewsItemBriefDto"
+              "$ref": "#/components/schemas/NewItemBriefDto"
             }
           },
           "pageNumber": {
@@ -798,7 +1094,7 @@
           }
         }
       },
-      "NewsItemBriefDto": {
+      "NewItemBriefDto": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
@@ -842,10 +1138,6 @@
             "nullable": true
           }
         }
-      },
-      "ComplextObject": {
-        "type": "object",
-        "additionalProperties": {}
       },
       "CreateNewItem": {
         "type": "object",
@@ -917,11 +1209,6 @@
             }
           }
         ]
-      },
-      "EntityCacheBase": {
-        "type": "object",
-        "x-abstract": true,
-        "additionalProperties": false
       },
       "PaginatedListOfServiceItemBriefDto": {
         "type": "object",

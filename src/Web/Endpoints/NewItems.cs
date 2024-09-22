@@ -17,7 +17,7 @@ public class NewItems : EndpointGroupBase
             .MapDelete(DeleteNewItem, "{id:guid}");
     }
 
-    public Task<PaginatedList<NewsItemBriefDto>> GetNewItemWithPagination(ISender sender, [AsParameters] GetNewItemsWithPaginationQuery query)
+    public Task<PaginatedList<NewItemBriefDto>> GetNewItemWithPagination(ISender sender, [AsParameters] GetNewItemsWithPaginationQuery query)
     {
         return sender.Send(query);
     }

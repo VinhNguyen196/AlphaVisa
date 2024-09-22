@@ -19,6 +19,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     public DbSet<NewItem> NewItems => Set<NewItem>();
 
+    public DbSet<ContactItem> ContactItems => Set<ContactItem>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

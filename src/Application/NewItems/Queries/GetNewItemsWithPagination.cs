@@ -2,11 +2,10 @@
 using AlphaVisa.Application.Common.Mappings;
 using AlphaVisa.Application.Common.Models;
 using AlphaVisa.Application.Common.Validators;
-using AlphaVisa.Application.ServiceItems.Queries;
 using AlphaVisa.Domain.Entities;
 
 namespace AlphaVisa.Application.NewItems.Queries;
-public record NewsItemBriefDto : IAuditableDto
+public record NewItemBriefDto : IAuditableDto
 {
     public Guid? Id { get; set; }
 
@@ -28,31 +27,31 @@ public record NewsItemBriefDto : IAuditableDto
     {
         public Mapping()
         {
-            CreateMap<NewItem, NewsItemBriefDto>();
+            CreateMap<NewItem, NewItemBriefDto>();
         }
     }
 }
 
-public record GetNewItemsWithPaginationQuery : IRequest<PaginatedList<NewsItemBriefDto>>
+public record GetNewItemsWithPaginationQuery : IRequest<PaginatedList<NewItemBriefDto>>
 {
     public int PageNumber { get; init; } = 1;
 
     public int PageSize { get; init; } = 10;
 }
 
-public class GetServiceItemsWithPaginationQueryValidator : AbstractValidator<GetServiceItemsWithPaginationQuery>
+public class GetNewItemsWithPaginationQueryValidator : AbstractValidator<GetNewItemsWithPaginationQuery>
 {
-    public GetServiceItemsWithPaginationQueryValidator(ISharedLocalizer localizer)
+    public GetNewItemsWithPaginationQueryValidator(ISharedLocalizer localizer)
     {
-        RuleFor(sis => sis.PageSize)
+        RuleFor(ni => ni.PageSize)
             .GreaterThanOrEqualTo(localizer);
 
-        RuleFor(sis => sis.PageNumber)
+        RuleFor(ni => ni.PageNumber)
             .GreaterThanOrEqualTo(localizer);
     }
 }
 
-public class GetNewItemsWithPaginationQueryHandler : IRequestHandler<GetNewItemsWithPaginationQuery, PaginatedList<NewsItemBriefDto>>
+public class GetNewItemsWithPaginationQueryHandler : IRequestHandler<GetNewItemsWithPaginationQuery, PaginatedList<NewItemBriefDto>>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMapper _mapper;
@@ -63,11 +62,11 @@ public class GetNewItemsWithPaginationQueryHandler : IRequestHandler<GetNewItems
         _mapper = mapper;
     }
 
-    public async Task<PaginatedList<NewsItemBriefDto>> Handle(GetNewItemsWithPaginationQuery request, CancellationToken cancellationToken)
+    public async Task<PaginatedList<NewItemBriefDto>> Handle(GetNewItemsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.NewItems
             .OrderBy(x => x.Topic)
-            .ProjectTo<NewsItemBriefDto>(_mapper.ConfigurationProvider)
+            .ProjectTo<NewItemBriefDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }
 }
