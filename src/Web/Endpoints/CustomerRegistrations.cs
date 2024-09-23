@@ -1,4 +1,5 @@
 ﻿using AlphaVisa.Application.CustomerRegistrations.Commands.RegisterBySendEmail;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AlphaVisa.Web.Endpoints;
 public class CustomerRegistrations : EndpointGroupBase
@@ -10,6 +11,7 @@ public class CustomerRegistrations : EndpointGroupBase
             .MapPost(RegisterBySendMail);
     }
 
+    [AllowAnonymous]
     public Task<int> RegisterBySendMail(ISender sender, RegisterBySendMailCommand command)
     {
         return sender.Send(command);

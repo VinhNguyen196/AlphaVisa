@@ -1,7 +1,7 @@
 ﻿using AlphaVisa.Application.Common.Models;
 using AlphaVisa.Application.ServiceItems.Commands;
 using AlphaVisa.Application.ServiceItems.Queries;
-using AlphaVisa.Application.TodoItems.Commands.UpdateTodoItem;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AlphaVisa.Web.Endpoints;
 
@@ -17,6 +17,7 @@ public class ServiceItems : EndpointGroupBase
             .MapDelete(DeleteServiceItem, "{id:guid}");
     }
 
+    [AllowAnonymous]
     public Task<PaginatedList<ServiceItemBriefDto>> GetServiceItemWithPagination(ISender sender, [AsParameters] GetServiceItemsWithPaginationQuery query)
     {
         return sender.Send(query);

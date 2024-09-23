@@ -2,6 +2,7 @@
 using AlphaVisa.Application.NewItems.Commands;
 using AlphaVisa.Application.NewItems.Queries;
 using AlphaVisa.Application.News.Commands;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AlphaVisa.Web.Endpoints;
 
@@ -17,6 +18,7 @@ public class NewItems : EndpointGroupBase
             .MapDelete(DeleteNewItem, "{id:guid}");
     }
 
+    [AllowAnonymous]
     public Task<PaginatedList<NewItemBriefDto>> GetNewItemWithPagination(ISender sender, [AsParameters] GetNewItemsWithPaginationQuery query)
     {
         return sender.Send(query);

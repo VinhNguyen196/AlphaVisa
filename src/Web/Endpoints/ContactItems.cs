@@ -1,6 +1,7 @@
 ﻿using AlphaVisa.Application.Common.Models;
 using AlphaVisa.Application.ContactItems.Commands;
 using AlphaVisa.Application.ContactItems.Queries;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AlphaVisa.Web.Endpoints;
 
@@ -16,6 +17,7 @@ public class ContactItems : EndpointGroupBase
             .MapDelete(DeleteContactItem, "{id:guid}");
     }
 
+    [AllowAnonymous]
     public Task<PaginatedList<ContactItemBriefDto>> GetContactItemWithPagination(ISender sender, [AsParameters] GetContactItemsWithPaginationQuery query)
     {
         return sender.Send(query);
