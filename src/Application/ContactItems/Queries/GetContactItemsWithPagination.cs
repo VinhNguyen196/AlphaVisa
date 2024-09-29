@@ -69,7 +69,7 @@ public class GetContactItemsWithPaginationQueryHandler : IRequestHandler<GetCont
     public async Task<PaginatedList<ContactItemBriefDto>> Handle(GetContactItemsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.ContactItems
-            .OrderBy(x => x.Name)
+            .OrderByDescending(x => x.Created)
             .ProjectTo<ContactItemBriefDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }

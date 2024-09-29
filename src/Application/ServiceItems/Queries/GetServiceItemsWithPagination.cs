@@ -34,6 +34,8 @@ public record ServiceItemBriefDto : IAuditableDto
 
 public record GetServiceItemsWithPaginationQuery : IRequest<PaginatedList<ServiceItemBriefDto>>
 {
+    public ServiceItemType? Type { get; set; }
+
     public int PageNumber { get; init; } = 1;
 
     public int PageSize { get; init; } = 10;
@@ -44,6 +46,10 @@ public class GetServiceItemsWithPaginationQueryValidator : AbstractValidator<Get
 {
     public GetServiceItemsWithPaginationQueryValidator(ISharedLocalizer localizer)
     {
+        RuleFor(si => si.Type)
+            .IsInEnum()
+            .When(si => si.Type.HasValue);
+
         RuleFor(sis => sis.PageSize)
             .GreaterThanOrEqualTo(localizer);
 
@@ -65,8 +71,14 @@ public class GetServiceItemsWithPaginationQueryHandler : IRequestHandler<GetServ
 
     public async Task<PaginatedList<ServiceItemBriefDto>> Handle(GetServiceItemsWithPaginationQuery request, CancellationToken cancellationToken)
     {
-        return await _context.ServiceItems
-           .OrderBy(x => x.Name)
+        var queryable = _context.ServiceItems.AsQueryable();
+
+        if (request.Type is not null)
+        {
+            queryable = queryable.Where(x => x.Type == request.Type);
+        }
+
+        return await queryable.OrderByDescending(x => x.Created)
            .ProjectTo<ServiceItemBriefDto>(_mapper.ConfigurationProvider)
            .PaginatedListAsync(request.PageNumber, request.PageSize);
     }

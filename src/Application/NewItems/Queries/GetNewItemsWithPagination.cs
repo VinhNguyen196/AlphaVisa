@@ -65,7 +65,7 @@ public class GetNewItemsWithPaginationQueryHandler : IRequestHandler<GetNewItems
     public async Task<PaginatedList<NewItemBriefDto>> Handle(GetNewItemsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.NewItems
-            .OrderBy(x => x.Topic)
+            .OrderByDescending(x => x.Created)
             .ProjectTo<NewItemBriefDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }
