@@ -88,6 +88,24 @@ namespace AlphaVisa.Web.Resources.ValidationMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Given request form doesn&apos;t have file data.
+        /// </summary>
+        internal static string NoFileFormData {
+            get {
+                return ResourceManager.GetString("NoFileFormData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Given request doesn&apos;t have form data.
+        /// </summary>
+        internal static string NoFormData {
+            get {
+                return ResourceManager.GetString("NoFormData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please provide a valid phone number..
         /// </summary>
         internal static string PhoneInvalid {

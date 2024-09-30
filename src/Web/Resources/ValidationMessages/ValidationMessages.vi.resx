@@ -126,6 +126,12 @@
   <data name="GreaterOrEqualTo" xml:space="preserve">
     <value>phải lớn hơn hoặc bằng {0}.</value>
   </data>
+  <data name="NoFileFormData" xml:space="preserve">
+    <value>Không tìm thấy dữ liệu tệp trong form</value>
+  </data>
+  <data name="NoFormData" xml:space="preserve">
+    <value>Không tìm thấy dữ liệu form trong request</value>
+  </data>
   <data name="PhoneInvalid" xml:space="preserve">
     <value>Vui lòng cung cấp một số điện thoại hợp lệ.</value>
   </data>

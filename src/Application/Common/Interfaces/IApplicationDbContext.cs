@@ -14,5 +14,7 @@ public interface IApplicationDbContext
 
     DbSet<ContactItem> ContactItems { get; }
 
+    DbSet<AttachmentItem> AttachmentItems { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

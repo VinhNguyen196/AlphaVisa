@@ -126,6 +126,12 @@
   <data name="GreaterOrEqualTo" xml:space="preserve">
     <value>at least greater than or equal to {0}.</value>
   </data>
+  <data name="NoFileFormData" xml:space="preserve">
+    <value>Given request form doesn't have file data</value>
+  </data>
+  <data name="NoFormData" xml:space="preserve">
+    <value>Given request doesn't have form data</value>
+  </data>
   <data name="PhoneInvalid" xml:space="preserve">
     <value>Please provide a valid phone number.</value>
   </data>

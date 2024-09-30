@@ -28,6 +28,8 @@ services:
     ports:
       - "8080:80"  # Map HTTP port
       - "8081:443" # Map HTTPS port (change to your desired port if necessary)
+    volumes:
+      - /var/alphavisa/filestores:/app/filestores
     depends_on:
       - sqlserver
     networks:

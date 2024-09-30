@@ -13,13 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.WebHost.ConfigureKestrel((context, serverOptions) =>
 {
-    //var kestrelSection = context.Configuration.GetSection("Kestrel");
-
-    //serverOptions.Configure(kestrelSection)
-    //    .Endpoint("HTTPS", listenOptions =>
-    //    {
-    //        // ...
-    //    });
+    serverOptions.Limits.MaxRequestBodySize = long.MaxValue;
 });
 
 // Enable cors
@@ -48,6 +42,8 @@ var localizationOptions = new RequestLocalizationOptions
     SupportedCultures = supportedCultures.Select(c => new CultureInfo(c)).ToList(),
     SupportedUICultures = supportedCultures.Select(c => new CultureInfo(c)).ToList()
 };
+
+builder.Services.AddAntiforgery();
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddWebServices();
@@ -94,6 +90,7 @@ app.MapFallbackToFile("index.html");
 
 app.Map("/", () => Results.Redirect("/api"));
 
+app.UseAntiforgery();
 app.MapEndpoints();
 
 app.Run();

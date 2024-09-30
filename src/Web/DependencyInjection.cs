@@ -33,6 +33,7 @@ public static class DependencyInjection
             options.SuppressModelStateInvalidFilter = true);
 
         services.AddScoped<ISharedLocalizer, SharedLocalizer>();
+        services.AddScoped<IHostService, HostService>();
         services.ConfigureOptions<EmailOptionsSetup>();
         services.AddTransient<IConfigureOptions<AspNetCoreOpenApiDocumentGeneratorSettings>, ConfigureSwaggerGenOptions>();
         services.ConfigureOptions<ConfigureSwaggerGenOptions>();
