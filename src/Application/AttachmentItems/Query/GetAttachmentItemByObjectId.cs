@@ -1,9 +1,10 @@
 ﻿using AlphaVisa.Application.Common.Interfaces;
 using AlphaVisa.Domain.Entities;
+using AlphaVisa.SharedKernel.Abstractions.Mappers;
 
 namespace AlphaVisa.Application.AttachmentItems.Query;
 
-public record AttachmentItemDtoBrief : IAuditableDto
+public record AttachmentItemDtoBrief : IAuditableDto, IMapFrom<AttachmentItem>
 {
     public Guid? Id { get; set; }
 
@@ -22,14 +23,6 @@ public record AttachmentItemDtoBrief : IAuditableDto
     public DateTimeOffset? Created {  get; set; }
 
     public DateTimeOffset? LastModified {  get; set; }
-
-    private class Mapping : Profile
-    {
-        public Mapping()
-        {
-            CreateMap<AttachmentItem, AttachmentItemDtoBrief>();
-        }
-    }
 }
 
 public record GetAttachmentItemByObjectIdQuery(Guid ObjectId) : IRequest<AttachmentItemDtoBrief>;

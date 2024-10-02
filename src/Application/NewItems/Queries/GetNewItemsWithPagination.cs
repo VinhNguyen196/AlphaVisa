@@ -3,9 +3,10 @@ using AlphaVisa.Application.Common.Mappings;
 using AlphaVisa.Application.Common.Models;
 using AlphaVisa.Application.Common.Validators;
 using AlphaVisa.Domain.Entities;
+using AlphaVisa.SharedKernel.Abstractions.Mappers;
 
 namespace AlphaVisa.Application.NewItems.Queries;
-public record NewItemBriefDto : IAuditableDto
+public record NewItemBriefDto : IAuditableDto, IMapFrom<NewItem>
 {
     public Guid? Id { get; set; }
 
@@ -22,14 +23,6 @@ public record NewItemBriefDto : IAuditableDto
     public DateTimeOffset? Created { get; set ; }
 
     public DateTimeOffset? LastModified { get; set; }
-
-    private class Mapping : Profile
-    {
-        public Mapping()
-        {
-            CreateMap<NewItem, NewItemBriefDto>();
-        }
-    }
 }
 
 public record GetNewItemsWithPaginationQuery : IRequest<PaginatedList<NewItemBriefDto>>

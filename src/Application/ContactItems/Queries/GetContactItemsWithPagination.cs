@@ -9,9 +9,10 @@ using AlphaVisa.Application.Common.Models;
 using AlphaVisa.Application.Common.Validators;
 using AlphaVisa.Application.ServiceItems.Queries;
 using AlphaVisa.Domain.Entities;
+using AlphaVisa.SharedKernel.Abstractions.Mappers;
 
 namespace AlphaVisa.Application.ContactItems.Queries;
-public record ContactItemBriefDto : IAuditableDto
+public record ContactItemBriefDto : IAuditableDto, IMapFrom<ContactItem>
 {
     public Guid? Id { get; set; }
 
@@ -26,14 +27,6 @@ public record ContactItemBriefDto : IAuditableDto
     public DateTimeOffset? Created { get; set; }
 
     public DateTimeOffset? LastModified { get; set; }
-
-    private class Mapping : Profile
-    {
-        public Mapping()
-        {
-            CreateMap<ContactItem, ContactItemBriefDto>();
-        }
-    }
 }
 
 public record GetContactItemsWithPaginationQuery : IRequest<PaginatedList<ContactItemBriefDto>>

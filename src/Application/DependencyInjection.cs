@@ -1,19 +1,23 @@
 ﻿using System.Reflection;
 using AlphaVisa.Application.Common.Behaviours;
 using AlphaVisa.Application.Common.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace AlphaVisa.Application;
 
 public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        var assembly = Assembly.GetExecutingAssembly();
 
-        services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddAutoMapper(assembly);
 
-        services.AddMediatR(cfg => {
-            cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+        services.AddValidatorsFromAssembly(assembly);
+
+        services.AddMediatR(cfg =>
+        {
+            cfg.RegisterServicesFromAssembly(assembly);
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(UnhandledExceptionBehaviour<,>));
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(AuthorizationBehaviour<,>));
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
