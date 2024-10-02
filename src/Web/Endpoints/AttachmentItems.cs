@@ -1,7 +1,7 @@
 ﻿using System.Dynamic;
 using AlphaVisa.Application.AttachmentItems.Command;
 using AlphaVisa.Application.AttachmentItems.Query;
-using AlphaVisa.Web.Attributes;
+using AlphaVisa.Web.Filters;
 using Microsoft.AspNetCore.Authorization;
 
 namespace AlphaVisa.Web.Endpoints;

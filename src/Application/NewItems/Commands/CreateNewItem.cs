@@ -2,7 +2,7 @@
 using AlphaVisa.Application.Common.Mappings;
 using AlphaVisa.Domain.Entities;
 
-namespace AlphaVisa.Application.News.Commands;
+namespace AlphaVisa.Application.NewItems.Commands;
 public record CreateNewItem(string? Topic, string? Thumbnail, string? Image, string? Description, ComplextObject? Content) : IRequest<Guid>;
 
 public class CreateNewValidator : AbstractValidator<CreateNewItem>

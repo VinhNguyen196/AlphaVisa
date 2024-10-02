@@ -1,4 +1,4 @@
-﻿using AlphaVisa.Application.CustomerRegistrations.Commands.RegisterBySendEmail;
+﻿using AlphaVisa.Application.CustomerRegistrations.Commands.RegisterBySendMail;
 using Microsoft.AspNetCore.Authorization;
 
 namespace AlphaVisa.Web.Endpoints;

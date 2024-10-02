@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using AlphaVisa.SharedKernel.Abstractions.Mappers;
-using AutoMapper.Internal;
 
 namespace AlphaVisa.Application;
 public class MappingProfile : Profile

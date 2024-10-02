@@ -9,7 +9,7 @@ using Microsoft.Extensions.Options;
 using NSwag.Generation.AspNetCore;
 using Asp.Versioning.ApiExplorer;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace AlphaVisa.Web;
 
 public static class DependencyInjection
 {

@@ -3,7 +3,7 @@ using AlphaVisa.Application.Common.Interfaces;
 using AlphaVisa.Application.Common.Mappings;
 using AlphaVisa.Domain.Entities;
 
-namespace AlphaVisa.Application.News.Commands;
+namespace AlphaVisa.Application.NewItems.Commands;
 public class UpdateNewItem : EntityCacheBase, IRequest
 {
     public Guid Id { get; set; }

@@ -1,13 +1,10 @@
 using System.Globalization;
-using AlphaVisa.Application.Common.Interfaces;
+using AlphaVisa.Application;
+using AlphaVisa.Infrastructure;
 using AlphaVisa.Infrastructure.Data;
-using AlphaVisa.Web.Options;
-using AlphaVisa.Web.Services;
-using Asp.Versioning;
-using Asp.Versioning.ApiExplorer;
+using AlphaVisa.Web;
+using AlphaVisa.Web.Exceptions;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.Options;
-using NSwag.Generation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,19 +45,21 @@ builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddWebServices();
 
+builder.Services.RegisterAppExceptions();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.UseExceptionHandler("/Error");
     await app.InitialiseDatabaseAsync();
 }
 else
 {
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler();
     // app.UseHttpsRedirection(); let proxy handle this operation
 }
 

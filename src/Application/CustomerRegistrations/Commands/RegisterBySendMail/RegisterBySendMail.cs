@@ -1,6 +1,6 @@
 ﻿using AlphaVisa.Application.Common.Interfaces;
 
-namespace AlphaVisa.Application.CustomerRegistrations.Commands.RegisterBySendEmail;
+namespace AlphaVisa.Application.CustomerRegistrations.Commands.RegisterBySendMail;
 
 public record RegisterBySendMailCommand : IRequest<int>
 {

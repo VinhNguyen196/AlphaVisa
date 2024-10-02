@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace AlphaVisa.Web.Attributes;
+namespace AlphaVisa.Web.Filters;
 
 public class MultipartFormDataFilter : IEndpointFilter
 {

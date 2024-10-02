@@ -1,7 +1,6 @@
 ﻿using AlphaVisa.Application.Common.Models;
 using AlphaVisa.Application.NewItems.Commands;
 using AlphaVisa.Application.NewItems.Queries;
-using AlphaVisa.Application.News.Commands;
 using Microsoft.AspNetCore.Authorization;
 
 namespace AlphaVisa.Web.Endpoints;
