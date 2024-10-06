@@ -20,7 +20,7 @@ public record NewItemBriefDto : IAuditableDto, IMapFrom<NewItem>
 
     public ComplextObject? Content { get; set; }
 
-    public DateTimeOffset? Created { get; set ; }
+    public DateTimeOffset? CreatedAt { get; set ; }
 
     public DateTimeOffset? LastModified { get; set; }
 }
@@ -58,7 +58,7 @@ public class GetNewItemsWithPaginationQueryHandler : IRequestHandler<GetNewItems
     public async Task<PaginatedList<NewItemBriefDto>> Handle(GetNewItemsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.NewItems
-            .OrderByDescending(x => x.Created)
+            .OrderByDescending(x => x.CreatedAt)
             .ProjectTo<NewItemBriefDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }

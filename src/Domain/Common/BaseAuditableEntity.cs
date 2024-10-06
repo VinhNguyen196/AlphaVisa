@@ -2,7 +2,7 @@
 
 public abstract class BaseAuditableEntity<T> : BaseEntity<T>
 {
-    public DateTimeOffset Created { get; set; }
+    public DateTimeOffset CreatedAt { get; set; }
 
     public string? CreatedBy { get; set; }
 

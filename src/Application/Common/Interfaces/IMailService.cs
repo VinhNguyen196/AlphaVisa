@@ -10,4 +10,6 @@ public interface IMailService
     public Task SendEmailAsync(IEnumerable<string> to, string subject, string content);
 
     public Task SendHtmlEmailAsync(IEnumerable<string> to, string subject, string htmlContent);
+
+    public Task SendAndSavedHtmlEmailAsync(IEnumerable<string> to, string subject, string htmlContent);
 }

@@ -52,10 +52,6 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="FileStores\" />
-  </ItemGroup>
-
 
   <!-- Auto-generated Open API specification and Angular TypeScript clients -->
   <PropertyGroup>

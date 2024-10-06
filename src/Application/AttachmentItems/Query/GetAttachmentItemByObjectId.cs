@@ -20,7 +20,7 @@ public record AttachmentItemDtoBrief : IAuditableDto, IMapFrom<AttachmentItem>
 
     public long? SizeBytes { get; set; }
 
-    public DateTimeOffset? Created {  get; set; }
+    public DateTimeOffset? CreatedAt {  get; set; }
 
     public DateTimeOffset? LastModified {  get; set; }
 }

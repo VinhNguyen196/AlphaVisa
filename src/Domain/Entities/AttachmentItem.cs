@@ -11,6 +11,10 @@ public class AttachmentItem : BaseAuditableEntity<Guid>
 
     public string? Url { get; set; }
 
+    public string? ThumbnailUrl { get; set; }
+
+    public FileSource? Source { get; set; }
+
     public string? Encoding { get; set; }
 
     public long? SizeBytes { get; set; }

@@ -31,26 +31,26 @@ public class AttachmentItems : EndpointGroupBase
             uploadedFiles.Add(fileDto);
         }
 
-        dynamic returnedValue = new ExpandoObject();
-        returnedValue.type = 2;
-        returnedValue.body = uploadedFiles;
-
-        return returnedValue;
+        return uploadedFiles;
     }
 
     [AllowAnonymous]
-    public async Task<IResult> GetAttachmentByObjectId(ISender sender, Guid objectId)
+    public async Task<IResult> GetAttachmentByObjectId(ISender sender, Guid objectId, bool isThumbnail = false)
     {
         var attachmentItem = await sender.Send(new GetAttachmentItemByObjectIdQuery(objectId));
 
-        var filePath = Path.Combine("FileStores", attachmentItem.Name!);
+        var filePath = Path.Combine("filestores", attachmentItem.ObjectId.GetValueOrDefault().ToString());
+        if (isThumbnail)
+        {
+            filePath += "_thumbnail";
+        }
 
-        if (!System.IO.File.Exists(filePath))
+        if (!File.Exists(filePath))
         {
             return Results.NotFound("File not found");
         }
 
-        var mimeType = attachmentItem.MimeType ?? "application/octet-stream";
+        var mimeType = isThumbnail ? "image/jpeg" : (attachmentItem.MimeType ?? "application/octet-stream");
         var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
 
         return Results.File(fileStream, contentType: mimeType, fileDownloadName: attachmentItem.Name);

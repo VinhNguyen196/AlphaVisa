@@ -12,8 +12,9 @@ public class CustomerRegistrations : EndpointGroupBase
     }
 
     [AllowAnonymous]
-    public Task<int> RegisterBySendMail(ISender sender, RegisterBySendMailCommand command)
+    public async Task<IResult> RegisterBySendMail(ISender sender, RegisterBySendMailCommand command)
     {
-        return sender.Send(command);
+        await sender.Send(command);
+        return Results.NoContent();
     }
 }

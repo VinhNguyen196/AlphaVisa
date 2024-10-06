@@ -13,6 +13,18 @@ public class MailService : IMailService
         _emailOptions = options;
     }
 
+    public async Task SendAndSavedHtmlEmailAsync(IEnumerable<string> to, string subject, string htmlContent)
+    {
+        Message message = new Message(to.Append(_emailOptions.Value.From ?? string.Empty), subject, htmlContent);
+        var readyMessage = CreateEmailMessage(message);
+        readyMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+        {
+            Text = htmlContent
+        };
+
+        await Send(readyMessage);
+    }
+
     public async Task SendEmailAsync(IEnumerable<string> to, string subject, string content)
     {
         Message message = new Message(to, subject, content);

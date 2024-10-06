@@ -19,7 +19,7 @@ public record ServiceItemBriefDto : IAuditableDto
 
     public ComplextObject? Description { get; set; }
 
-    public DateTimeOffset? Created { get; set; }
+    public DateTimeOffset? CreatedAt { get; set; }
 
     public DateTimeOffset? LastModified { get; set; }
 
@@ -78,7 +78,7 @@ public class GetServiceItemsWithPaginationQueryHandler : IRequestHandler<GetServ
             queryable = queryable.Where(x => x.Type == request.Type);
         }
 
-        return await queryable.OrderByDescending(x => x.Created)
+        return await queryable.OrderByDescending(x => x.CreatedAt)
            .ProjectTo<ServiceItemBriefDto>(_mapper.ConfigurationProvider)
            .PaginatedListAsync(request.PageNumber, request.PageSize);
     }

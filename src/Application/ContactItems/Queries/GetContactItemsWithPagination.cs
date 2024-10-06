@@ -24,7 +24,7 @@ public record ContactItemBriefDto : IAuditableDto, IMapFrom<ContactItem>
 
     public ComplextObject? Metadata { get; set; }
 
-    public DateTimeOffset? Created { get; set; }
+    public DateTimeOffset? CreatedAt { get; set; }
 
     public DateTimeOffset? LastModified { get; set; }
 }
@@ -62,7 +62,7 @@ public class GetContactItemsWithPaginationQueryHandler : IRequestHandler<GetCont
     public async Task<PaginatedList<ContactItemBriefDto>> Handle(GetContactItemsWithPaginationQuery request, CancellationToken cancellationToken)
     {
         return await _context.ContactItems
-            .OrderByDescending(x => x.Created)
+            .OrderByDescending(x => x.CreatedAt)
             .ProjectTo<ContactItemBriefDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }

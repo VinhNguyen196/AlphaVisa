@@ -2,7 +2,7 @@
 
 namespace AlphaVisa.Application.CustomerRegistrations.Commands.RegisterBySendMail;
 
-public record RegisterBySendMailCommand : IRequest<int>
+public record RegisterBySendMailCommand : IRequest
 {
     public string? Title { get; set; }
 
@@ -40,7 +40,7 @@ public class RegisterBySendMailCommandValidator : AbstractValidator<RegisterBySe
     }
 }
 
-public class RegisterBySendMailCommandHandler : IRequestHandler<RegisterBySendMailCommand, int>
+public class RegisterBySendMailCommandHandler : IRequestHandler<RegisterBySendMailCommand>
 {
     private readonly IApplicationDbContext _context;
     private readonly IMailService _mailService;
@@ -51,13 +51,11 @@ public class RegisterBySendMailCommandHandler : IRequestHandler<RegisterBySendMa
         _mailService = mailService;
     }
 
-    public async Task<int> Handle(RegisterBySendMailCommand request, CancellationToken cancellationToken)
+    public async Task Handle(RegisterBySendMailCommand request, CancellationToken cancellationToken)
     {
         var to = new string[] { request.Email ?? string.Empty };
 
-        await _mailService.SendHtmlEmailAsync(to, request.Title ?? "Booking consultant", GenerateBody(request));
-
-        return 1;
+        await _mailService.SendAndSavedHtmlEmailAsync(to, request.Title ?? "Booking consultant", GenerateBody(request));
     }
 
     public string GenerateBody(RegisterBySendMailCommand request)
