@@ -10,7 +10,7 @@ public class UpdateNewItem : EntityCacheBase, IRequest
 
     public string? Topic { get; set; }
 
-    public string? Thumbnail { get; set; }
+    public Guid? ThumbnailId { get; set; }
 
     public string? Image { get; set; }
 
@@ -79,7 +79,7 @@ public class UpdateNewItemHandler : IRequestHandler<UpdateNewItem>
         Guard.Against.NotFound(request.Id, entity);
 
         entity.Topic = request.Topic;
-        entity.Thumbnail = request.Thumbnail;
+        entity.AttachmentItemId = request.ThumbnailId;
         entity.Image = request.Image;
         entity.Description = request.Description;
         entity.Content = request.Content;

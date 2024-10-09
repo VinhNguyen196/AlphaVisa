@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AlphaVisa.Domain.Entities;
+﻿using AlphaVisa.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -12,5 +7,9 @@ public class ContactItemConfiguration : IEntityTypeConfiguration<ContactItem>
 {
     public void Configure(EntityTypeBuilder<ContactItem> builder)
     {
+        builder.HasOne(ci => ci.Thumbnail)
+            .WithOne()
+            .HasForeignKey<ContactItem>(ci => ci.AttachmentItemId)
+            .IsRequired(false);
     }
 }

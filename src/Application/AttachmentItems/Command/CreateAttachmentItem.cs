@@ -8,7 +8,7 @@ using SixLabors.ImageSharp.Formats.Jpeg;
 using SixLabors.ImageSharp.Processing;
 
 namespace AlphaVisa.Application.AttachmentItems.Command;
-public record CreateAttachmentItemBriefDto(string? FileName, string? MimeType, long? Size, string? Url, string? ThumbnailUrl, FileSource? Source) : IAuditableDto
+public record CreateAttachmentItemBriefDto(Guid? Id, string? FileName, string? MimeType, long? Size, string? Url, string? ThumbnailUrl, FileSource? Source) : IAuditableDto
 {
     public DateTimeOffset? CreatedAt {  get; set; }
     public DateTimeOffset? LastModified {  get; set; }
@@ -89,7 +89,8 @@ public class CreateAttachmentItemHandler : IRequestHandler<CreateAttachmentItem,
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        return new CreateAttachmentItemBriefDto(attachmentItem.Name, 
+        return new CreateAttachmentItemBriefDto(attachmentItem.Id,
+            attachmentItem.Name, 
             attachmentItem.MimeType, 
             attachmentItem.SizeBytes, 
             attachmentItem.Url, 

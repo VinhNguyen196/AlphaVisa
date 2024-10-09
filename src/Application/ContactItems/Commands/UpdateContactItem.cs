@@ -10,7 +10,7 @@ public class UpdateContactItem : EntityCacheBase, IRequest
 
     public string? Name { get; set; }
 
-    public string? Thumbnail { get; set; }
+    public Guid? ThumbnailId { get; set; }
 
     public string? Story { get; set; }
 
@@ -77,7 +77,7 @@ public class UpdateContactItemHandler : IRequestHandler<UpdateContactItem>
         Guard.Against.NotFound(request.Id, entity);
 
         entity.Name = request.Name;
-        entity.Thumbnail = request.Thumbnail;
+        entity.AttachmentItemId = request.ThumbnailId;
         entity.Story = request.Story;
         entity.Metadata = request.Metadata;
 

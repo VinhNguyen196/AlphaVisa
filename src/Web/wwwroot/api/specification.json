@@ -997,8 +997,12 @@
             "nullable": true
           },
           "thumbnail": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AttachmentItemDtoBrief"
+              }
+            ]
           },
           "story": {
             "type": "string",
@@ -1024,6 +1028,53 @@
           }
         }
       },
+      "AttachmentItemDtoBrief": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nameWithoutExtension": {
+            "type": "string",
+            "nullable": true
+          },
+          "mimeType": {
+            "type": "string",
+            "nullable": true
+          },
+          "objectId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
       "ComplextObject": {
         "type": "object",
         "additionalProperties": {}
@@ -1036,8 +1087,9 @@
             "type": "string",
             "nullable": true
           },
-          "thumbnail": {
+          "thumbnailId": {
             "type": "string",
+            "format": "guid",
             "nullable": true
           },
           "story": {
@@ -1071,8 +1123,9 @@
                 "type": "string",
                 "nullable": true
               },
-              "thumbnail": {
+              "thumbnailId": {
                 "type": "string",
+                "format": "guid",
                 "nullable": true
               },
               "story": {
@@ -1166,8 +1219,12 @@
             "nullable": true
           },
           "thumbnail": {
-            "type": "string",
-            "nullable": true
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/AttachmentItemDtoBrief2"
+              }
+            ]
           },
           "image": {
             "type": "string",
@@ -1197,6 +1254,53 @@
           }
         }
       },
+      "AttachmentItemDtoBrief2": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "nameWithoutExtension": {
+            "type": "string",
+            "nullable": true
+          },
+          "mimeType": {
+            "type": "string",
+            "nullable": true
+          },
+          "objectId": {
+            "type": "string",
+            "format": "guid",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "format": "int64",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
       "CreateNewItem": {
         "type": "object",
         "additionalProperties": false,
@@ -1205,8 +1309,9 @@
             "type": "string",
             "nullable": true
           },
-          "thumbnail": {
+          "thumbnailId": {
             "type": "string",
+            "format": "guid",
             "nullable": true
           },
           "image": {
@@ -1244,8 +1349,9 @@
                 "type": "string",
                 "nullable": true
               },
-              "thumbnail": {
+              "thumbnailId": {
                 "type": "string",
+                "format": "guid",
                 "nullable": true
               },
               "image": {

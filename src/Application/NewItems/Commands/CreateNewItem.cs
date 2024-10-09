@@ -3,7 +3,8 @@ using AlphaVisa.Application.Common.Mappings;
 using AlphaVisa.Domain.Entities;
 
 namespace AlphaVisa.Application.NewItems.Commands;
-public record CreateNewItem(string? Topic, string? Thumbnail, string? Image, string? Description, ComplextObject? Content) : IRequest<Guid>;
+
+public record CreateNewItem(string? Topic, Guid? ThumbnailId, string? Image, string? Description, ComplextObject? Content) : IRequest<Guid>;
 
 public class CreateNewValidator : AbstractValidator<CreateNewItem>
 {
@@ -43,11 +44,11 @@ public class CreateNewHandler : IRequestHandler<CreateNewItem, Guid>
     {
         var entity = new NewItem
         {
-            Topic = request.Topic,
-            Thumbnail = request.Thumbnail,
-            Image = request.Image,
-            Description = request.Description,
-            Content = request.Content,
+            Topic = request?.Topic,
+            AttachmentItemId = request?.ThumbnailId,
+            Image = request?.Image,
+            Description = request?.Description,
+            Content = request?.Content,
         };
 
         _context.NewItems.Add(entity);

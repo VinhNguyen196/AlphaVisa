@@ -7,5 +7,9 @@ public class NewItemConfiguration : IEntityTypeConfiguration<NewItem>
 {
     public void Configure(EntityTypeBuilder<NewItem> builder)
     {
+        builder.HasOne(ni => ni.Thumbnail)
+            .WithOne()
+            .HasForeignKey<NewItem>(ni => ni.AttachmentItemId)
+            .IsRequired(false);
     }
 }

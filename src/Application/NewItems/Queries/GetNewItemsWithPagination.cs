@@ -6,13 +6,34 @@ using AlphaVisa.Domain.Entities;
 using AlphaVisa.SharedKernel.Abstractions.Mappers;
 
 namespace AlphaVisa.Application.NewItems.Queries;
+public record AttachmentItemDtoBrief : IAuditableDto, IMapFrom<AttachmentItem>
+{
+    public Guid? Id { get; set; }
+
+    public string? Name { get; set; }
+
+    public string? NameWithoutExtension { get; set; }
+
+    public string? MimeType { get; set; }
+
+    public Guid? ObjectId { get; set; }
+
+    public string? Url { get; set; }
+
+    public long? SizeBytes { get; set; }
+
+    public DateTimeOffset? CreatedAt { get; set; }
+
+    public DateTimeOffset? LastModified { get; set; }
+}
+
 public record NewItemBriefDto : IAuditableDto, IMapFrom<NewItem>
 {
     public Guid? Id { get; set; }
 
     public string? Topic { get; set; }
 
-    public string? Thumbnail { get; set; }
+    public AttachmentItemDtoBrief? Thumbnail { get; set; }
 
     public string? Image { get; set; }
 
@@ -59,6 +80,7 @@ public class GetNewItemsWithPaginationQueryHandler : IRequestHandler<GetNewItems
     {
         return await _context.NewItems
             .OrderByDescending(x => x.CreatedAt)
+            .Include(x => x.Thumbnail)
             .ProjectTo<NewItemBriefDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }

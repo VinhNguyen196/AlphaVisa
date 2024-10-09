@@ -1,24 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AlphaVisa.Application.Common.Interfaces;
+﻿using AlphaVisa.Application.Common.Interfaces;
 using AlphaVisa.Application.Common.Mappings;
 using AlphaVisa.Application.Common.Models;
 using AlphaVisa.Application.Common.Validators;
-using AlphaVisa.Application.ServiceItems.Queries;
 using AlphaVisa.Domain.Entities;
 using AlphaVisa.SharedKernel.Abstractions.Mappers;
 
 namespace AlphaVisa.Application.ContactItems.Queries;
+public record AttachmentItemDtoBrief : IAuditableDto, IMapFrom<AttachmentItem>
+{
+    public Guid? Id { get; set; }
+
+    public string? Name { get; set; }
+
+    public string? NameWithoutExtension { get; set; }
+
+    public string? MimeType { get; set; }
+
+    public Guid? ObjectId { get; set; }
+
+    public string? Url { get; set; }
+
+    public long? SizeBytes { get; set; }
+
+    public DateTimeOffset? CreatedAt { get; set; }
+
+    public DateTimeOffset? LastModified { get; set; }
+}
+
 public record ContactItemBriefDto : IAuditableDto, IMapFrom<ContactItem>
 {
     public Guid? Id { get; set; }
 
     public string? Name { get; set; }
 
-    public string? Thumbnail { get; set; }
+    public AttachmentItemDtoBrief? Thumbnail { get; set; }
 
     public string? Story { get; set; }
 
@@ -63,6 +78,7 @@ public class GetContactItemsWithPaginationQueryHandler : IRequestHandler<GetCont
     {
         return await _context.ContactItems
             .OrderByDescending(x => x.CreatedAt)
+            .Include(x => x.Thumbnail)
             .ProjectTo<ContactItemBriefDto>(_mapper.ConfigurationProvider)
             .PaginatedListAsync(request.PageNumber, request.PageSize);
     }
