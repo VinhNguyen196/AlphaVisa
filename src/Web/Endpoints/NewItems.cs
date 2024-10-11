@@ -1,5 +1,6 @@
 ﻿using AlphaVisa.Application.Common.Models;
 using AlphaVisa.Application.NewItems.Commands;
+using AlphaVisa.Application.NewItems.Dtos;
 using AlphaVisa.Application.NewItems.Queries;
 using Microsoft.AspNetCore.Authorization;
 
@@ -11,10 +12,18 @@ public class NewItems : EndpointGroupBase
     {
         app.MapGroup(this)
             .RequireAuthorization()
+            .MapGet(GetNewItemById, "{id:guid}")
             .MapGet(GetNewItemWithPagination)
             .MapPost(CreateNewItem)
             .MapPut(UpdateNewItem, "{id:guid}")
             .MapDelete(DeleteNewItem, "{id:guid}");
+    }
+
+    [AllowAnonymous]
+    public Task<NewItemBriefDto> GetNewItemById(ISender sender, Guid id)
+    {
+        var query = new GetNewItemByIdQuery(id);
+        return sender.Send(query);
     }
 
     [AllowAnonymous]

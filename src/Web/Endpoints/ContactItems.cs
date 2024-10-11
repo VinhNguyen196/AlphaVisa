@@ -1,5 +1,6 @@
 ﻿using AlphaVisa.Application.Common.Models;
 using AlphaVisa.Application.ContactItems.Commands;
+using AlphaVisa.Application.ContactItems.Dtos;
 using AlphaVisa.Application.ContactItems.Queries;
 using Microsoft.AspNetCore.Authorization;
 
@@ -11,10 +12,18 @@ public class ContactItems : EndpointGroupBase
     {
         app.MapGroup(this)
             .RequireAuthorization()
+            .MapGet(GetContactItemById, "{id:guid}")
             .MapGet(GetContactItemWithPagination)
             .MapPost(CreateContactItem)
             .MapPut(UpdateContactItem, "{id:guid}")
             .MapDelete(DeleteContactItem, "{id:guid}");
+    }
+
+    [AllowAnonymous]
+    public Task<ContactItemBriefDto> GetContactItemById(ISender sender, Guid id)
+    {
+        var query = new GetContactItemByIdQuery(id);
+        return sender.Send(query);
     }
 
     [AllowAnonymous]

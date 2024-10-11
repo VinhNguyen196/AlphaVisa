@@ -2,50 +2,11 @@
 using AlphaVisa.Application.Common.Mappings;
 using AlphaVisa.Application.Common.Models;
 using AlphaVisa.Application.Common.Validators;
+using AlphaVisa.Application.NewItems.Dtos;
 using AlphaVisa.Domain.Entities;
 using AlphaVisa.SharedKernel.Abstractions.Mappers;
 
 namespace AlphaVisa.Application.NewItems.Queries;
-public record AttachmentItemDtoBrief : IAuditableDto, IMapFrom<AttachmentItem>
-{
-    public Guid? Id { get; set; }
-
-    public string? Name { get; set; }
-
-    public string? NameWithoutExtension { get; set; }
-
-    public string? MimeType { get; set; }
-
-    public Guid? ObjectId { get; set; }
-
-    public string? Url { get; set; }
-
-    public long? SizeBytes { get; set; }
-
-    public DateTimeOffset? CreatedAt { get; set; }
-
-    public DateTimeOffset? LastModified { get; set; }
-}
-
-public record NewItemBriefDto : IAuditableDto, IMapFrom<NewItem>
-{
-    public Guid? Id { get; set; }
-
-    public string? Topic { get; set; }
-
-    public AttachmentItemDtoBrief? Thumbnail { get; set; }
-
-    public string? Image { get; set; }
-
-    public string? Description { get; set; }
-
-    public ComplextObject? Content { get; set; }
-
-    public DateTimeOffset? CreatedAt { get; set ; }
-
-    public DateTimeOffset? LastModified { get; set; }
-}
-
 public record GetNewItemsWithPaginationQuery : IRequest<PaginatedList<NewItemBriefDto>>
 {
     public int PageNumber { get; init; } = 1;
