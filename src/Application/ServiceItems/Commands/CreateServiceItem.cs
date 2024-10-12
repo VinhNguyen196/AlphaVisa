@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using AlphaVisa.Application.Common.Interfaces;
+﻿using AlphaVisa.Application.Common.Interfaces;
 using AlphaVisa.Application.Common.Mappings;
 using AlphaVisa.Domain.Entities;
 using AlphaVisa.Domain.Enums;
@@ -60,7 +59,7 @@ public class CreateServiceItemCommandHandler : IRequestHandler<CreateServiceItem
         var entity = new ServiceItem
         {
             Name = request.Name,
-            Type = request.Type ?? ServiceItemType.VISA_FOREIGNERS,
+            Type = request.Type ?? ServiceItemType.VISIT,
             Thumbnail = request.Thumbnail,
             Description = request.Description,
         };

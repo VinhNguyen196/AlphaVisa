@@ -135,6 +135,9 @@
   <data name="PhoneInvalid" xml:space="preserve">
     <value>Vui lòng cung cấp một số điện thoại hợp lệ.</value>
   </data>
+  <data name="PhoneInvalidFormat" xml:space="preserve">
+    <value>Giá trị '{PropertyName}' không đúng định dạng số điện thoại</value>
+  </data>
   <data name="PropertyMustExist" xml:space="preserve">
     <value>Không tìm thấy dữ liệu với giá trị '{PropertyName}' này</value>
   </data>

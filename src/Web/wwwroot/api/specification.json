@@ -84,6 +84,54 @@
         ]
       }
     },
+    "/api/v1/AVConfigurations": {
+      "get": {
+        "tags": [
+          "AVConfigurations"
+        ],
+        "operationId": "GetAVConfiguration",
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AVConfigurationBriefDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "AVConfigurations"
+        ],
+        "operationId": "UpdateAVConfiguration",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAVConfigurationCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/v1/ContactItems/{id}": {
       "get": {
         "tags": [
@@ -1013,6 +1061,76 @@
   },
   "components": {
     "schemas": {
+      "AVConfigurationBriefDto": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "addressLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "socialLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastModified": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "UpdateAVConfigurationCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "language": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "addressLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "socialLink": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
       "ContactItemBriefDto": {
         "type": "object",
         "additionalProperties": false,
@@ -1038,7 +1156,7 @@
             "type": "string",
             "nullable": true
           },
-          "metadata": {
+          "content": {
             "nullable": true,
             "oneOf": [
               {
@@ -1156,7 +1274,7 @@
             "type": "string",
             "nullable": true
           },
-          "metadata": {
+          "content": {
             "nullable": true,
             "oneOf": [
               {
@@ -1192,7 +1310,7 @@
                 "type": "string",
                 "nullable": true
               },
-              "metadata": {
+              "content": {
                 "nullable": true,
                 "oneOf": [
                   {
@@ -1518,7 +1636,7 @@
           "EMPLOYMENT",
           "IMMIGRATION",
           "SPONSORSHIP",
-          "VISA_FOREIGNERS"
+          "VISIT"
         ],
         "enum": [
           1,

@@ -12,5 +12,5 @@ public enum ServiceItemType
     EMPLOYMENT,
     IMMIGRATION,
     SPONSORSHIP,
-    VISA_FOREIGNERS,
+    VISIT
 }

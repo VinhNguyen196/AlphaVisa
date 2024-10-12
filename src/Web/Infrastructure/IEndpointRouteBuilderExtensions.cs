@@ -39,7 +39,7 @@ public static class IEndpointRouteBuilderExtensions
         return builder;
     }
 
-    public static IEndpointRouteBuilder MapPut(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern, IList<Action<RouteHandlerBuilder>> actions = default!, int version = 1)
+    public static IEndpointRouteBuilder MapPut(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern = "", IList<Action<RouteHandlerBuilder>> actions = default!, int version = 1)
     {
         Guard.Against.AnonymousMethod(handler);
 
@@ -52,7 +52,7 @@ public static class IEndpointRouteBuilderExtensions
         return builder;
     }
 
-    public static IEndpointRouteBuilder MapDelete(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern, IList<Action<RouteHandlerBuilder>> actions = default!, int version = 1)
+    public static IEndpointRouteBuilder MapDelete(this IEndpointRouteBuilder builder, Delegate handler, [StringSyntax("Route")] string pattern = "", IList<Action<RouteHandlerBuilder>> actions = default!, int version = 1)
     {
         Guard.Against.AnonymousMethod(handler);
 

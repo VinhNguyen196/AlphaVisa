@@ -115,6 +115,15 @@ namespace AlphaVisa.Web.Resources.ValidationMessages {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Given &apos;{PropertyName}&apos; is invalid phone format.
+        /// </summary>
+        internal static string PhoneInvalidFormat {
+            get {
+                return ResourceManager.GetString("PhoneInvalidFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Given &apos;{PropertyName}&apos; must be existed.
         /// </summary>
         internal static string PropertyMustExist {

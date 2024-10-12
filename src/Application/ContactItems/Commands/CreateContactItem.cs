@@ -3,7 +3,7 @@ using AlphaVisa.Application.Common.Mappings;
 using AlphaVisa.Domain.Entities;
 
 namespace AlphaVisa.Application.ContactItems.Commands;
-public record CreateContactItem(string? Name, Guid? ThumbnailId, string? Story, ComplextObject? Metadata) : IRequest<Guid>;
+public record CreateContactItem(string? Name, Guid? ThumbnailId, string? Story, ComplextObject? Content) : IRequest<Guid>;
 
 public class CreateContactValidator : AbstractValidator<CreateContactItem>
 {
@@ -19,7 +19,7 @@ public class CreateContactValidator : AbstractValidator<CreateContactItem>
                 .WithMessage(localizer["PropertyMustUnique"])
                 .WithErrorCode("Unique");
 
-        RuleFor(n => n.Metadata)
+        RuleFor(n => n.Content)
             .NotEmpty();
     }
 
@@ -46,7 +46,7 @@ public class CreateContactHandler : IRequestHandler<CreateContactItem, Guid>
             Name = request?.Name,
             AttachmentItemId = request?.ThumbnailId,
             Story = request?.Story,
-            Metadata = request?.Metadata,
+            Content = request?.Content,
         };
 
         _context.ContactItems.Add(entity);

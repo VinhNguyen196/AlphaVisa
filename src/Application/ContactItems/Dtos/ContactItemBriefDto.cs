@@ -14,7 +14,7 @@ public record ContactItemBriefDto : IAuditableDto, IMapFrom<ContactItem>
 
     public string? Story { get; set; }
 
-    public ComplextObject? Metadata { get; set; }
+    public ComplextObject? Content { get; set; }
 
     public DateTimeOffset? CreatedAt { get; set; }
 

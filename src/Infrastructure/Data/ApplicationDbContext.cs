@@ -23,6 +23,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplica
 
     public DbSet<AttachmentItem> AttachmentItems => Set<AttachmentItem>();
 
+    public DbSet<AVConfiguration> AVConfigurations => Set<AVConfiguration>();
+
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);

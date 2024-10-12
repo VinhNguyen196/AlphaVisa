@@ -14,7 +14,7 @@ public class UpdateContactItem : EntityCacheBase, IRequest
 
     public string? Story { get; set; }
 
-    public ComplextObject? Metadata { get; set; }
+    public ComplextObject? Content { get; set; }
 }
 
 public class UpdateContactItemValidator : AbstractValidator<UpdateContactItem>
@@ -49,7 +49,7 @@ public class UpdateContactItemValidator : AbstractValidator<UpdateContactItem>
                 .WithMessage(localizer["PropertyMustUnique"])
                 .WithErrorCode("Unique");
 
-        RuleFor(n => n.Metadata)
+        RuleFor(n => n.Content)
             .NotEmpty();
     }
 
@@ -79,7 +79,7 @@ public class UpdateContactItemHandler : IRequestHandler<UpdateContactItem>
         entity.Name = request.Name;
         entity.AttachmentItemId = request.ThumbnailId;
         entity.Story = request.Story;
-        entity.Metadata = request.Metadata;
+        entity.Content = request.Content;
 
         await _context.SaveChangesAsync(cancellationToken);
     }

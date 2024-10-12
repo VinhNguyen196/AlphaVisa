@@ -11,5 +11,5 @@ public class ContactItem : BaseAuditableEntity<Guid>
 
     public string? Story { get; set; }
 
-    public string? Metadata { get; set; }
+    public string? Content { get; set; }
 }

@@ -16,5 +16,7 @@ public interface IApplicationDbContext
 
     DbSet<AttachmentItem> AttachmentItems { get; }
 
+    DbSet<AVConfiguration> AVConfigurations { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

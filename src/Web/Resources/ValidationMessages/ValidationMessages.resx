@@ -135,6 +135,9 @@
   <data name="PhoneInvalid" xml:space="preserve">
     <value>Please provide a valid phone number.</value>
   </data>
+  <data name="PhoneInvalidFormat" xml:space="preserve">
+    <value>Given '{PropertyName}' is invalid phone format</value>
+  </data>
   <data name="PropertyMustExist" xml:space="preserve">
     <value>Given '{PropertyName}' must be existed</value>
   </data>
