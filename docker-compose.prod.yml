@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  web:
+  api:
     environment:
       ASPNETCORE_ENVIRONMENT: "Development" # This sets the environment to Production, which is fine
       ASPNETCORE_URLS: "http://+:80" # https://+:443; This is correct, you are binding to both HTTP and HTTPS ports

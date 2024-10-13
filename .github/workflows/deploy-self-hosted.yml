@@ -66,6 +66,39 @@ jobs:
       with:
         name: efbundle
     
+    - name: Create .env file with environment variables
+      run: |
+        ENV_PATH="${{ vars.APP_PATH }}"
+        ENV_FILE="${{ vars.ENV_FILE }}"
+        
+        # Create the .env file in the specified ENV_PATH
+        mkdir -p $ENV_PATH
+        ENV_CONFIG=$ENV_PATH/$ENV_FILE
+        rm -rf $ENV_CONFIG
+        touch $ENV_CONFIG
+        
+        echo "ENV_NAME=${{ inputs.environmentName }}" >> $ENV_CONFIG
+        echo "APP_PATH=${{ vars.APP_PATH }}" >> $ENV_CONFIG
+        echo "APP_BACKUP_PATH=${{ vars.APP_BACKUP_PATH }}" >> $ENV_CONFIG
+        echo "SQL_DB_CONTAINER=${{ vars.SQL_DB_CONTAINER }}" >> $ENV_CONFIG
+        echo "SQL_DB_NAME=${{ vars.SQL_DB_NAME }}" >> $ENV_CONFIG
+        echo "SQL_DB_PASSWORD=${{ vars.SQL_DB_PASSWORD }}" >> $ENV_CONFIG
+        echo "API_CONTAINER=${{ vars.API_CONTAINER }}" >> $ENV_CONFIG
+        echo "WEB_CONTAINER=${{ vars.WEB_CONTAINER }}" >> $ENV_CONFIG
+        echo "DOCKER_REGISTRY=${{ vars.DOCKER_ALPHAVISA_REPO }}" >> $ENV_CONFIG
+        echo "WEB_TAG=${{ inputs.webTag }}" >> $ENV_CONFIG
+        echo "API_PORT=${{ vars.API_PORT }}" >> $ENV_CONFIG
+        echo "WEB_PORT=${{ vars.WEB_PORT }}" >> $ENV_CONFIG
+        echo "API_DOMAIN=${{ vars.API_DOMAIN }}" >> $ENV_CONFIG
+        echo "WEB_DOMAIN=${{ vars.WEB_DOMAIN }}" >> $ENV_CONFIG
+        echo "SERVER_API_URL=${{ vars.SERVER_API_URL }}" >> $ENV_CONFIG
+        echo "APP_MAIL=${{ vars.APP_MAIL }}" >> $ENV_CONFIG
+        echo "SQL_DB_SERVER=${{ vars.SQL_DB_SERVER }}" >> $ENV_CONFIG
+        echo "SQL_DATA_PATH=${{ vars.SQL_DATA_PATH }}" >> $ENV_CONFIG
+        echo "FILE_STORE_PATH=${{ vars.FILE_STORE_PATH }}" >> $ENV_CONFIG
+        echo "RUNNER_REPO=${{ vars.RUNNER_REPO }}" >> $ENV_CONFIG
+        echo "RUNNER_TOKEN=${{ vars.RUNNER_TOKEN }}" >> $ENV_CONFIG
+    
     - name: Pull Docker Image
       run: |
         echo "${{ vars.DOCKER_TOKEN }}" | docker login -u "${{ vars.DOCKER_USERNAME }}" --password-stdin
@@ -176,6 +209,11 @@ jobs:
         echo "SQL_DB_PASSWORD=${{ vars.SQL_DB_PASSWORD }}" >> .env
         echo "DOCKER_REGISTRY=${{ vars.DOCKER_ALPHAVISA_REPO }}" >> .env
         echo "WEB_TAG=${{ inputs.webTag }}" >> .env
+        echo "API_PORT=${{ vars.API_PORT }}" >> .env
+        echo "API_CONTAINER=${{ vars.API_CONTAINER }}" >> .env
+        echo "WEB_CONTAINER=${{ vars.WEB_CONTAINER }}" >> .env
+        echo "SQL_DATA_PATH=${{ vars.SQL_DATA_PATH }}" >> .env
+        echo "FILE_STORE_PATH=${{ vars.FILE_STORE_PATH }}" >> .env
 
     - name: Deploy Application
       run: |
@@ -195,6 +233,22 @@ jobs:
             exit 1
         fi
         echo "SQL Server is ready."
+        
+    # - name: Install unzip, zip tool #
+      # run: |
+          # sudo apt-get update
+          # sudo apt-get install -y unzip zip
+          
+    - name: Apply EF Core migrations
+      run: |
+        unzip -o efbundle.zip
+        ./efbundle.exe --connection "Server=${{ vars.SQL_DB_SERVER }};Database=${{ vars.SQL_DB_NAME }};User ID=sa;Password=${{ vars.SQL_DB_PASSWORD }};Encrypt=true;TrustServerCertificate=true;"
+        mkdir -p ${{ vars.APP_PATH }}
+        cp efbundle.zip ${{ vars.APP_PATH }}/
+      continue-on-error: true  # Skip this step if it fails
+    
+    - name: Wait for API to be Ready
+      run: |
         echo "Waiting for Application to be available..."
         timeout 120s bash -c 'until curl -sSf http://localhost:8080 > /dev/null 2>&1; do
             echo "Application is not available yet, waiting..."
@@ -205,18 +259,7 @@ jobs:
             exit 1
         fi
         echo "Application is ready."
-
-    # - name: Install unzip, zip tool #
-      # run: |
-          # sudo apt-get update
-          # sudo apt-get install -y unzip zip
-          
-    - name: Apply EF Core migrations
-      run: |
-        unzip -o efbundle.zip
-        ./efbundle.exe --connection "Server=${{ vars.SQL_DB_SERVER }};Database=${{ vars.SQL_DB_NAME }};User ID=sa;Password=${{ vars.SQL_DB_PASSWORD }};Encrypt=true;TrustServerCertificate=true;"
-      continue-on-error: true  # Skip this step if it fails
-
+        
     - name: Reload Nginx to apply any new configurations
       run: |
         sudo systemctl reload nginx

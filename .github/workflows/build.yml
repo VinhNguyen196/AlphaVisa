@@ -86,6 +86,12 @@ jobs:
       if: ${{ inputs.build-artifacts == true }}
       run: |
         docker build -t ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ steps.set_tag.outputs.webTag }} -f src/Web/Dockerfile .
+    
+    # Tag the image as 'latest' in addition to the dynamically generated tag
+    - name: Tag Docker image as latest
+      if: ${{ inputs.build-artifacts == true }}
+      run: |
+        docker tag ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ steps.set_tag.outputs.webTag }} ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ inputs.environmentName }}-latest
 
     # Push Docker Image to Registry
     - name: Push Docker image to registry
@@ -93,6 +99,7 @@ jobs:
       run: |
         docker login -u ${{ vars.DOCKER_USERNAME }} -p ${{ vars.DOCKER_TOKEN }}
         docker push ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ steps.set_tag.outputs.webTag }}
+        docker push ${{ vars.DOCKER_ALPHAVISA_REPO }}:${{ inputs.environmentName }}-latest
     
     - name: Create EF Core migrations bundle - Install tool-manifest
       if: ${{ inputs.build-artifacts == true }}
