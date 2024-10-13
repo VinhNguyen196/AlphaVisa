@@ -77,6 +77,7 @@ jobs:
         rm -rf $ENV_CONFIG
         touch $ENV_CONFIG
         
+        echo "ENV_FILE=${{ vars.ENV_FILE }}" >> $ENV_CONFIG
         echo "ENV_NAME=${{ inputs.environmentName }}" >> $ENV_CONFIG
         echo "APP_PATH=${{ vars.APP_PATH }}" >> $ENV_CONFIG
         echo "APP_BACKUP_PATH=${{ vars.APP_BACKUP_PATH }}" >> $ENV_CONFIG
@@ -98,6 +99,23 @@ jobs:
         echo "FILE_STORE_PATH=${{ vars.FILE_STORE_PATH }}" >> $ENV_CONFIG
         echo "RUNNER_REPO=${{ vars.RUNNER_REPO }}" >> $ENV_CONFIG
         echo "RUNNER_TOKEN=${{ vars.RUNNER_TOKEN }}" >> $ENV_CONFIG
+        # Push ENV_CONFIG to GitHub's environment for use in later steps
+        echo "ENV_CONFIG=$ENV_CONFIG" >> $GITHUB_ENV
+        
+    - name: Check if .env file exists and zip it
+      run: |
+          if [ -f "$ENV_CONFIG" ]; then
+            zip env_backup.zip $ENV_CONFIG
+          else
+            echo ".env file does not exist. Exiting."
+            exit 1
+          fi
+
+    - name: Upload .env as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: env-backup
+        path: env_backup.zip
     
     - name: Pull Docker Image
       run: |
