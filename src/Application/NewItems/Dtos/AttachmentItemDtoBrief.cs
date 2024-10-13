@@ -5,9 +5,16 @@ using AlphaVisa.SharedKernel.Abstractions.Mappers;
 namespace AlphaVisa.Application.NewItems.Dtos;
 public record AttachmentItemDtoBrief : IAuditableDto, IMapFrom<AttachmentItem>
 {
+    public void Mapping(Profile profile)
+    {
+        profile.CreateMap<AttachmentItem, AttachmentItemDtoBrief>()
+            .ForMember(dest => dest.FileName, opts => opts.MapFrom(src => src.Name))
+            .ForMember(dest => dest.Size, opts => opts.MapFrom(src => src.SizeBytes));
+    }
+
     public Guid? Id { get; set; }
 
-    public string? Name { get; set; }
+    public string? FileName { get; set; }
 
     public string? NameWithoutExtension { get; set; }
 
@@ -17,7 +24,9 @@ public record AttachmentItemDtoBrief : IAuditableDto, IMapFrom<AttachmentItem>
 
     public string? Url { get; set; }
 
-    public long? SizeBytes { get; set; }
+    public string? ThumbnailUrl { get; set; }
+
+    public long? Size { get; set; }
 
     public DateTimeOffset? CreatedAt { get; set; }
 

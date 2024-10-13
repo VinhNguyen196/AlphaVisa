@@ -1193,7 +1193,7 @@
             "format": "guid",
             "nullable": true
           },
-          "name": {
+          "fileName": {
             "type": "string",
             "nullable": true
           },
@@ -1214,7 +1214,11 @@
             "type": "string",
             "nullable": true
           },
-          "sizeBytes": {
+          "thumbnailUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "size": {
             "type": "integer",
             "format": "int64",
             "nullable": true
@@ -1419,7 +1423,7 @@
             "format": "guid",
             "nullable": true
           },
-          "name": {
+          "fileName": {
             "type": "string",
             "nullable": true
           },
@@ -1440,7 +1444,11 @@
             "type": "string",
             "nullable": true
           },
-          "sizeBytes": {
+          "thumbnailUrl": {
+            "type": "string",
+            "nullable": true
+          },
+          "size": {
             "type": "integer",
             "format": "int64",
             "nullable": true
