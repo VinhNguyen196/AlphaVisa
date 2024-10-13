@@ -1089,6 +1089,10 @@
             "type": "string",
             "nullable": true
           },
+          "addressMap": {
+            "type": "string",
+            "nullable": true
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time",
@@ -1126,6 +1130,10 @@
             "nullable": true
           },
           "socialLink": {
+            "type": "string",
+            "nullable": true
+          },
+          "addressMap": {
             "type": "string",
             "nullable": true
           }

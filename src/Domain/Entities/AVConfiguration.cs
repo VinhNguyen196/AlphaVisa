@@ -18,4 +18,6 @@ public class AVConfiguration : BaseAuditableEntity<Guid>
     public string? AddressLink { get; set; }
 
     public string? SocialLink { get; set; }
+
+    public string? AddressMap { get; set; }
 }

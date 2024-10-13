@@ -7,7 +7,8 @@ public record UpdateAVConfigurationCommand(string? Language,
     string? Email, 
     string? Address, 
     string? AddressLink, 
-    string? SocialLink) 
+    string? SocialLink,
+    string? AddressMap) 
     : IRequest;
 
 public class UpdateAVConfigurationCommandValidator : AbstractValidator<UpdateAVConfigurationCommand>
@@ -45,7 +46,8 @@ public class UpdateAVConfigurationCommandHandler : IRequestHandler<UpdateAVConfi
             Email = request?.Email,
             Address = request?.Address,
             AddressLink = request?.AddressLink,
-            SocialLink = request?.SocialLink
+            SocialLink = request?.SocialLink,
+            AddressMap = request?.AddressMap,
         };
 
         _context.AVConfigurations.Add(entity);

@@ -17,6 +17,8 @@ public record AVConfigurationBriefDto : IAuditableDto, IMapFrom<AVConfiguration>
 
     public string? SocialLink { get; set; } = string.Empty;
 
+    public string? AddressMap { get; set; } = string.Empty;
+
     public DateTimeOffset? CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 
     public DateTimeOffset? LastModified {  get; set; } = DateTimeOffset.UtcNow;
